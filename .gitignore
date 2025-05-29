@@ -1,0 +1,4 @@
+databases/
+djangoenv/
+__pycache__/
+migrations/
