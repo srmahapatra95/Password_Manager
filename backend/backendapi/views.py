@@ -1,8 +1,12 @@
 from django.shortcuts import render
-
-# Create your views here.
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate,logout,login
+from django.views.decorators.http import require_safe
+from django.views.decorators.cache import never_cache
+from django.middleware.csrf import get_token
+
+
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,6 +15,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import permissions
 from rest_framework.authentication import TokenAuthentication,SessionAuthentication
 from rest_framework.authtoken.models import Token
+from rest_framework.decorators import api_view, renderer_classes
+
 
 
 
@@ -18,14 +24,31 @@ from .models import UserData
 from .serializers import *
 
 
+#https://stackoverflow.com/questions/77026228/how-do-i-setup-csrf-token-for-purely-rest-api-communication-between-two-django-a
+@require_safe # only safe methods GET and HEAD, any operation with PUT, PATCH, POST is rejected
+@never_cache
+def get_csrf(request):
+    get_token(request)
+    return JsonResponse({"msg": 'Obtain the token in Cookies...'})
+
+class UserNameAvailableView(APIView):
+    def get(self, request):
+        username = request.query_params.get('username')
+        user = User.objects.filter(username=username).exists()
+        print(user)
+        if not user:
+            return Response({'msg':'Available'}, status=status.HTTP_200_OK)
+        return Response({'msg':'Not Available'}, status=status.HTTP_200_OK)
+
 class UserCreationView(APIView):
     """
         Create a User, only POST method allowed
     """
     serializer_class = UserCreationSerializers
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.AllowAny]     
+          
         
-    def post(self, request, format=None):
+    def post(self, request):
         serializer = UserCreationSerializers(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -52,7 +75,6 @@ class UpdateProfilePasswordView(APIView):
             serializer.save()
             return Response({'message':'Password has been updated'}, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        #return Response(status=status.HTTP_400_BAD_REQUEST)
     
 class LoginView(APIView):
 
@@ -69,12 +91,32 @@ class LoginView(APIView):
             return Response({"token":token.key}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+@api_view(('GET',))
+def Logout(request):
+    logout(request)
+    return Response(status=status.HTTP_200_OK)
 
-class UserDataListView(generics.ListAPIView):
-    queryset = UserData.objects.all()
-    serializer_class = UserDataDetailSerializers
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+class UserDataListView(APIView):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserDataDetailSerializers
+
+    def get_object(self, request):
+        return User.objects.get(username=request.user)
+
+    def get(self, request):
+        user = self.get_object(request)
+        try:
+            instance = UserData.objects.filter(user=user)
+            print(instance)
+            serializer = UserDataDetailSerializers(instance,many=True)
+            print(serializer)
+        except:
+            instance = None
+
+        if instance:
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         serializer = UserDataDetailSerializers(data=request.data)

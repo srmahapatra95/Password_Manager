@@ -16,6 +16,13 @@ class UserCreationSerializers(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+    
+class UserNameAvailableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['username']
+
+
 class ProfilePasswordUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User

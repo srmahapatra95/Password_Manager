@@ -1,0 +1,157 @@
+import {React ,useState, useContext, useEffect } from 'react'
+
+import { Link, useNavigate } from 'react-router'
+import { GlobalContext } from '../../store';
+import { register ,login} from '../../store/actions/actions';
+import getCookie from '../../utils/utils';
+
+function Auth() {
+
+    const {authState, authDispatch} = useContext(GlobalContext);
+    const {registerState, registerDispatch} = useContext(GlobalContext);
+    const navigate = useNavigate();
+    const [authChooser, setAuthChooser] = useState('login');
+
+    useEffect(()=>{
+
+        let ct = null
+        async function get_csrf_token(){
+            let data;
+            const response = await fetch('http://localhost:8001/api/get-csrf/',{
+            method:'GET',
+            })
+            data = await response.json()
+
+
+            return data
+        }
+        get_csrf_token().then(data => console.log(data))
+
+    },[])
+
+    function handleChooseAuth(e, choice){
+        setAuthChooser(choice)
+    }
+
+
+    function Login(){
+
+        useEffect(() => {
+            if(authState.token != null){
+                navigate('/dashboard')
+            }
+        }, [authState.token])
+
+        const [loginForm, setLoginForm] = useState({
+            username: '',
+            password: ''
+        })
+
+        function handleFormChange(e, login_or_register, property){
+            switch(login_or_register){
+                case 'login':
+                    setLoginForm((prevData) => ({
+                        ...prevData, [property]: e.target.value
+                    }))
+                    break
+                case 'register':
+                    setRegisterForm((prevData) => ({
+                        ...prevData, [property]: e.target.value
+                    }))
+                    break
+            }
+        }
+
+        function handleLogin(e){
+            const csrftoken = getCookie('csrftoken')
+            const loginAction = login(authDispatch)
+            loginAction(loginForm, csrftoken)
+
+        }
+
+
+        return (<>
+        <div className='w-xs sm:w-4/10 flex flex-col justify-center items-center border-3 border-white p-5 rounded-md'>
+            <div class="relative z-0 w-full mb-5 group">
+                <input value={loginForm.username} onChange={(e) => handleFormChange(e,'login', 'username')} type="email" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                <label for="floating_email" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                <input value={loginForm.password} onChange={(e) => handleFormChange(e,'login', 'password')} type="password" name="floating_password" id="floating_password" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                <label for="floating_password" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
+            </div>
+            <div className="grid md:grid-cols-2 md:gap-6">
+            </div>
+            <button onClick={(e) => handleLogin(e)} className="w-full text-white bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm px-5 py-2.5 text-center">Submit</button>
+            <button onClick={(e) => handleChooseAuth(e, 'register')} className='p-1 my-1 border-0 text-white  hover:bg-slate-700 rounded-lg w-full pointer'>Register</button>
+            <hr className=" w-full h-1 bg-gray-100 rounded-sm dark:bg-gray-700"/>
+        </div>
+        </>)
+    }
+    function Register(){
+        const [registerForm, setRegisterForm] = useState({
+            username: '',
+            password: '',
+        })
+        const [password2, setPassword2] = useState('')
+
+        function handleFormChange(e, login_or_register, property){
+            switch(login_or_register){
+                case 'login':
+                    setLoginForm((prevData) => ({
+                        ...prevData, [property]: e.target.value
+                    }))
+                    break
+                case 'register':
+                    setRegisterForm((prevData) => ({
+                        ...prevData, [property]: e.target.value
+                    }))
+                    break
+            }
+        }
+
+        function handleRegister(e){
+            console.log(registerForm, password2)
+            if(registerForm.password == password2){
+                const registerAction = register(registerDispatch)
+                registerAction(registerForm)
+            }else{
+                alert('Not the same password')
+            }
+        }
+
+
+        return(<>
+        <div className='w-xs w-4/10 flex flex-col justify-center items-center border-3 border-white p-5 rounded-md'>
+            <div class="relative z-0 w-full mb-5 group">
+                <input value={registerForm.username} onChange={(e) => handleFormChange(e,'register', 'username')} type="email" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                <label for="floating_email" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                <input value={registerForm.password1} onChange={(e) => handleFormChange(e,'register', 'password')} type="password" name="floating_password" id="floating_password" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                <label for="floating_password" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Password</label>
+            </div>
+            <div class="relative z-0 w-full mb-5 group">
+                <input value={password2} onChange={(e) => setPassword2(e.target.value)} type="password" name="repeat_password" id="floating_repeat_password" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
+                <label for="floating_repeat_password" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Confirm password</label>
+            </div>
+            <div className="grid md:grid-cols-2 md:gap-6">
+            </div>
+            <button onClick={(e) => handleRegister(e)} className="w-full text-white bg-blue-700 hover:bg-blue-800  font-medium rounded-lg text-sm px-5 py-2.5 text-center">Submit</button>
+            <button onClick={(e) => handleChooseAuth(e, 'login')} className='p-1 my-1 border-0 text-white hover:bg-slate-700 rounded-lg w-full pointer'>Login</button>
+            <hr className=" w-full h-1 bg-gray-100 rounded-sm dark:bg-gray-700"/>
+        </div>
+        </>)
+    }
+
+
+  return (
+    <>
+    <div className='w-screen h-screen flex flex-col justify-center items-center bg-black'>
+        {authChooser == 'login'?(<><Login/></>):(<><Register/></>)}
+    </div>
+    </>
+  )
+}
+
+export default Auth
