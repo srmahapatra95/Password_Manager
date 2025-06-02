@@ -101,22 +101,12 @@ class UserDataListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserDataDetailSerializers
 
-    def get_object(self, request):
-        return User.objects.get(username=request.user)
 
     def get(self, request):
-        user = self.get_object(request)
-        try:
-            instance = UserData.objects.filter(user=user)
-            print(instance)
-            serializer = UserDataDetailSerializers(instance,many=True)
-            print(serializer)
-        except:
-            instance = None
+        instance = UserData.objects.filter(user=request.user)
+        serializer = UserDataDetailSerializers(instance,many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-        if instance:
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         serializer = UserDataDetailSerializers(data=request.data)

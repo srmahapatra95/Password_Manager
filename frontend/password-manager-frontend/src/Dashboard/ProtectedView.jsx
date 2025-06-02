@@ -4,8 +4,8 @@ import { GlobalContext } from '../../store';
 
 function ProtectedView() {
     const {authState, authDispatch} = useContext(GlobalContext);
-    console.log(authState.token)
-    if(authState.token == null){
+    const token = localStorage.getItem("token")
+    if(token == null){
         return <Navigate to='/auth' replace/>
     }
     return <Outlet/>

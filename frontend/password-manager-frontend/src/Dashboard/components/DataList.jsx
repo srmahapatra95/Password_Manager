@@ -1,0 +1,99 @@
+  import {React ,useState,useContext, useEffect } from 'react'
+  import { GlobalContext } from '../../../store';
+  import { fetchdatalist } from '../../../store/actions/actions';
+  function DataList(){
+
+    const {listViewState, listViewDispatch} = useContext(GlobalContext);
+    const {authState,authDispatch} = useContext(GlobalContext)
+    const {tabState, tabDispatch} = useContext(GlobalContext)
+    const {screenState,screenDispatch} = useContext(GlobalContext)
+    const [filterText, setFilterText] = useState('')
+
+    const {id, setId, user, setUser, details_for, setDetails_for, username, setUsername,email,setEmail, mobile,setMobile, password, setPassword, info, setInfo} = useContext(GlobalContext)
+
+    useEffect(() => {
+
+        const token = localStorage.getItem('token')
+        const fetchData = fetchdatalist(listViewDispatch);
+        fetchData(token)
+    },[])
+
+
+    function handleOpenTab(data){
+        screenDispatch({type: 'DISABLE_TAB_SCREEN', payload: false})
+        let isPresent = tabState.tabButtonList.filter((item) => item.id == data.id)
+        if(isPresent.length > 0){
+            alert("Tab is Open")
+        }else{
+            setId(data.id)
+            setUser(data.user)
+            setDetails_for(data.details_for)
+            setUsername(data.username)
+            setEmail(data.email)
+            setMobile(data.mobile)
+            setPassword(data.password)
+            setInfo(data.info)
+                screenDispatch({ type: 'DISABLE', payload: false });
+                screenDispatch({type: 'DISABLE_TAB_SCREEN', payload: false})
+            tabDispatch({type:'ADD_TAB', payload: data})
+        }
+    }
+
+    function ListItem({data}){
+        return(
+            <div onClick={() => handleOpenTab(data)} className="p-1 cursor-pointer">
+                <div className=" bg-indigo-500 p-1">
+                    <p className="">{data.details_for}</p>
+                </div>
+            </div>
+        )
+    }
+
+    function FilteredListItem(){
+        
+
+        let filteredItems = listViewState.itemslist.filter((item) => {
+           if(item.details_for.toLowerCase().includes(filterText.toLowerCase())){
+            return item
+           }
+        })
+        
+        let viewitems = filteredItems.map((value, index) => {
+            return <ListItem key={index} data={value}/>
+        })
+
+        return(
+            <>
+                {listViewState.itemslist.length !== 0 ? 
+                    (<>{viewitems}</>) : 
+                    (
+                        <div className="text-black text-lg">
+                            <p>No items to display</p>
+                        </div>
+                    )
+                }
+            </>
+        )
+    }
+    console.log("Ouside : ",listViewState.itemslist.length,listViewState.itemslist)
+
+    return(<>
+    <div class="max-w-md my-1 bg-green-200 h-7/10 flex flex-col">   
+        <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+        <div class="relative m-1">
+            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                </svg>
+            </div>
+            <input type="search" id="default-search" value={filterText} onChange={(e) => setFilterText(e.target.value)} class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Type to Search..." />
+        </div>
+        <div className='p-2 overflow-y-auto no-scrollbar'>
+            <FilteredListItem/>
+        </div>
+    </div>
+
+
+    </>)
+  }
+  export default DataList;

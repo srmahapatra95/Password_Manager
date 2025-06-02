@@ -37,10 +37,11 @@ export const login = (dispatch) => async (credentials, csrftoken) => {
             body: JSON.stringify(credentials)
           });
     let data = await response.json()
-    console.log(data)
 
     if (data) {
       dispatch({ type: 'LOGIN_SUCCESS', payload: data });
+      localStorage.setItem('token', data.token)
+
     } else {
       dispatch({ type: 'LOGIN_FAILURE', payload: response.error });
 
@@ -66,8 +67,6 @@ export const register = (dispatch) => async (signUpData) => {
             body: JSON.stringify(signUpData)
           });
     let data = await response.json()
-    console.log(data)
-    //const response = await fakeLoginAPI(credentials);
 
     if (data) {
       dispatch({ type: 'REGSITER_SUCCESS', payload: data });
@@ -75,8 +74,52 @@ export const register = (dispatch) => async (signUpData) => {
       dispatch({ type: 'REGSITER_FAILURE', payload: response.error });
     }
   } catch (error) {
-    console.log(error)
     dispatch({ type: 'REGSITER_FAILURE', payload: error.message });
+
+  }
+};
+
+export const logout = () => async (token) => {
+  try{
+        const URL = `${API_URL}/api/logout/`
+        const response = await fetch(URL,{
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`,
+            },
+          });
+    let data = await response.status
+    console.log(data)
+    localStorage.removeItem("token")
+  }catch(error){
+    console.log(error)
+  }
+}
+  
+export const fetchdatalist = (dispatch) => async (token) => {
+  try {
+    dispatch({ type: 'LOADING_DATA' });
+
+    const URL = `${API_URL}/api/datalist/`
+    const response = await fetch(URL,{
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`,
+            },
+          });
+    let data = await response.json()
+    console.log("Actions:",data)
+    if (Array.isArray(data)) {
+      dispatch({ type: 'ADD_ITEM', payload: data });
+    } else {
+      alert(data.msg)
+    }
+  } catch (error) {
+      console.log(error)
 
   }
 };
