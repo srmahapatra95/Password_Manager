@@ -1,5 +1,5 @@
 import React,{ createContext, useReducer , useState} from "react";
-import {authReducer, registerReducer, screenReducer, tabReducer, listViewReducer} from './reducers/reducers'
+import {authReducer, registerReducer, screenReducer, tabReducer, listViewReducer, deleteItemsReducer} from './reducers/reducers'
 
 const initialAuthState = {
     username: null,
@@ -31,6 +31,10 @@ const initialListViewState = {
     itemslist: [],
 }
 
+initialDeleteItemsState = {
+    deleteitems: []
+}
+
 export const GlobalContext = createContext(initialAuthState)
 
 const GlobalProvider = ({children}) => {
@@ -39,6 +43,8 @@ const GlobalProvider = ({children}) => {
     const [screenState, screenDispatch] = useReducer(screenReducer,initialScreenState)
     const [tabState, tabDispatch] = useReducer(tabReducer,initialTabState)
     const [listViewState, listViewDispatch] = useReducer(listViewReducer,initialListViewState)
+    const [deleteItemsState, deleteItemsDispatch] = useReducer(deleteItemsReducer,initialDeleteItemsState)
+
 
     const [id, setId] = useState(-1)
     const [user, setUser] = useState(-1)
@@ -60,6 +66,8 @@ const GlobalProvider = ({children}) => {
         tabDispatch:tabDispatch,
         listViewState:listViewState,
         listViewDispatch:listViewDispatch,
+        deleteItemsState:deleteItemsState,
+        deleteItemsDispatch: deleteItemsDispatch,
 
         id:id,
         setId:setId,

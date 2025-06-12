@@ -12,6 +12,7 @@ urlpatterns = [
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/logout/', Logout, name='logout'),
     path('api/datalist/', UserDataListView.as_view(), name='datalist'),
+    path('api/add-data/', AddUserDataView.as_view(), name='add-data'),
     path('api/datadetail/<int:pk>/', UserDataDetailView.as_view(), name='datadetail'),
     path('api/get-csrf/', get_csrf, name='get-csrf'),
     re_path(r'^.*', TemplateView.as_view(template_name="index.html"), name='index'),

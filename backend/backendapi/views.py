@@ -107,6 +107,11 @@ class UserDataListView(APIView):
         serializer = UserDataDetailSerializers(instance,many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class AddUserDataView(APIView):
+
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserDataDetailSerializers
 
     def post(self, request):
         serializer = UserDataDetailSerializers(data=request.data)

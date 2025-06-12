@@ -114,7 +114,7 @@ export const fetchdatalist = (dispatch) => async (token) => {
     let data = await response.json()
     console.log("Actions:",data)
     if (Array.isArray(data)) {
-      dispatch({ type: 'ADD_ITEM', payload: data });
+      dispatch({ type: 'LOAD_ITEM', payload: data });
     } else {
       alert(data.msg)
     }
@@ -124,3 +124,28 @@ export const fetchdatalist = (dispatch) => async (token) => {
   }
 };
   
+export const add_data = (dispatch) => async (data,token) => {
+  try {
+
+    const URL = `${API_URL}/api/add-data/`
+    const response = await fetch(URL,{
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`,
+            },
+            body: JSON.stringify(data)
+          });
+    let data = await response.json()
+    console.log("Actions:",data)
+    if (Array.isArray(data)) {
+      dispatch({ type: 'ADD_ITEM', payload: data });
+    } else {
+      alert(data.msg)
+    }
+  } catch (error) {
+      console.log(error)
+
+  }
+};

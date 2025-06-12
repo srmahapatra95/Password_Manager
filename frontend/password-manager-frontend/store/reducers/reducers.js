@@ -93,9 +93,13 @@ export function listViewReducer(state, action){
       return{
         ...state,loading: true,
       }
-    case 'ADD_ITEM':
+    case 'LOAD_ITEM':
       return {
         ...state,itemslist: action.payload,loading:false
+      }
+    case 'ADD_ITEM':
+      return {
+        ...state,itemslist: [...state.itemslist, action.payload]
       }
     case 'UPDATE_ITEM':
       let filterTab = [...state.itemslist.filter((elem) =>elem.id != action.payload.id)]
@@ -107,9 +111,23 @@ export function listViewReducer(state, action){
       return {
         ...state,itemslist: [...filteredOut]
     }
+    case 'SET_ITEMS':
+      return {
+        ...state,itemslist: action.payload
+    }
     case 'LOGOUT':
       return{
         ...state,loading: false,itemslist: []
+      }
+  }
+}
+
+export function deleteItemsReducer(state, action){
+
+  switch(action.type){
+    case "ADD_DATA":
+      return{
+        ...state,loading: true,
       }
   }
 }
