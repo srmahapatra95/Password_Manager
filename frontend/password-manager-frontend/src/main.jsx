@@ -8,7 +8,6 @@ import GlobalProvider from '../store/index.jsx'
 import './index.css'
 import App from './Home/App.jsx'
 import Dashboard from './Dashboard/Dashboard.jsx'
-import Auth from './Login_Register/Auth.jsx'
 import ProtectedView from './Dashboard/ProtectedView.jsx';
 
 
@@ -26,10 +25,6 @@ const router = createBrowserRouter([
       },
     ]
   },
-  {
-    path:"/auth",
-    element: <Auth/>,
-  }
 
 ])
 

@@ -84,11 +84,11 @@ function Tab() {
         }
 
         return (
-            <div className={`w-15/100 h-98/100 p-2 border-b-3 border-rose-50 flex flex-row justify-between items-center cursor-pointer ${isActiveTab ? 'bg-slate-600 border-t-3 border-slate-600' : ''}`}>
+            <div className={`w-15/100 h-98/100 p-2 border-b-3 border-rose-50 flex flex-row justify-between items-center cursor-pointer ${isActiveTab ? 'bg-slate-600 border-t-3 rounded-t-md text-slate-100 border-slate-600' : 'bg-slate-800 text-slate-100 border-slate-600'}`}>
                 <div onClick={handleTabClick} className="w-full h-full p-1 flex items-center" title={data.name}>
                     <p>{data.details_for}</p>
                 </div>
-                <button onClick={handleCloseTab} className="hover:bg-rose-50 rounded-full cursor-pointer" title="Close tab">
+                <button onClick={handleCloseTab} className="hover:bg-rose-50 hover:text-black rounded-full cursor-pointer" title="Close tab">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
                     <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
                     </svg>
@@ -103,15 +103,15 @@ function Tab() {
 
   return (
     <>
-    <div className='bg-indigo-400 flex flex-col justify-center items-center w-98/100 h-98/100'>
-        <div id='tab-buttons' className='w-full h-1/10 bg-rose-600 flex-flex-row'>
+    <div className='flex flex-col justify-center items-center w-98/100 h-98/100'>
+        <div id='tab-buttons' className='w-full h-1/10 flex-flex-row'>
             {buttonList.length > 0 && (
-                <div className="flex flex-row h-full items-center bg-green-500 overflow-x-auto no-scrollbar">{buttonList}</div>
+                <div className="flex flex-row h-full items-center overflow-x-auto no-scrollbar">{buttonList}</div>
             )}
         </div>
-        <div id='tab-content' className='w-full h-9/10 bg-slate-600'>
+        <div id='tab-content' className='w-full h-9/10 bg-gray-900'>
             {tabState.tabContentList.length > 0 && (
-                <div className="w-full h-full bg-green-200">
+                <div className="w-full h-full bg-slate-800">
                     <TabContent />
                 </div>
             )}        </div>

@@ -13,5 +13,9 @@
       -ms-overflow-style: none; /* IE and Edge */
       scrollbar-width: none; /* Firefox */
     }
+    .opaque{
+      background: rgba(10,10,10,0.3);
+      backdrop-filter: blur(1.5px);
+    }
 }
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

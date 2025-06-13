@@ -53,6 +53,10 @@ export function screenReducer(state, action){
 }
 export function tabReducer(state, action){
   switch(action.type){
+    case 'REINITIALIZE_TAB':
+      return {
+        ...state, activeTab:action.payload,tabButtonList:action.payload,tabContentList:action.payload
+      }
     case 'ADD_TAB':
       return {
         ...state,tabButtonList:[...state.tabButtonList, action.payload],tabContentList:[...state.tabContentList, action.payload],activeTab:[...state.activeTab, action.payload]

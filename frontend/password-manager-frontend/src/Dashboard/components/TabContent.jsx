@@ -87,8 +87,8 @@ function TabContent(){
 
     return (
         <> 
-        <div className="w-full h-full flex flex-col relative">
-            <div className="w-full h-9/10 flex flex-col justify-center p-2 bg-rose-500">
+        <div className="w-98/100 p-2 h-full flex flex-col relative">
+            <div className="w-full h-9/10 flex flex-col justify-center p-2">
 
                 <div className="">
                     <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Details For</label>
@@ -131,11 +131,11 @@ function TabContent(){
                             />
                         )}
                     </div>
-                    <div className="flex flex-row p-2">
-                        <button onClick={handleDecryptPassword} className="p-2 border-2 border-white mx-1 rounded-md hover:bg-slate-200">
+                    <div className="flex flex-row pt-2">
+                        <button onClick={handleDecryptPassword} className="cursor-pointer p-2 border-2 border-white mx-1 text-slate-100 rounded-md hover:bg-slate-500">
                             Show
                         </button>
-                        <button onClick={handleEnablePasswordChange} className="p-2 border-2 border-white mx-1 rounded-md  hover:bg-slate-200">
+                        <button onClick={handleEnablePasswordChange} className=" cursor-pointer p-2 border-2 border-white mx-1 text-slate-100 rounded-md  hover:bg-slate-500">
                             Change
                         </button>
                     </div>
@@ -147,11 +147,11 @@ function TabContent(){
                 </div>
             </div>
             
-            <div className="w-full h-1/10 flex flex-row justify-end p-2 bg-indigo-500">
-                <button onClick={handleSave} className="p-2 mx-3 hover:bg-slate-600">
+            <div className="w-full h-1/10 flex flex-row justify-end p-2">
+                <button onClick={handleSave} className="cursor-pointer p-2 border-2 border-white mx-1 text-slate-100 rounded-md hover:bg-slate-500">
                   Save
                 </button>
-                <button onClick={handleDelete} className="p-2 mx-3 hover:bg-slate-600">
+                <button onClick={handleDelete} className="cursor-pointer p-2 border-2 border-red-800 mx-1 text-rose-500 hover:text-slate-100 rounded-md hover:bg-rose-500">
                   Delete
                 </button>
             </div>

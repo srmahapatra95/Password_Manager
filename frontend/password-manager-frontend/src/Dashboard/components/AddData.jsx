@@ -72,7 +72,7 @@ function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
                 <input value={info} onChange={(e)=>setInfo(e.target.value)} id="info" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
             </div> 
 
-            <button onClick={handleAddDataSubmit} class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700">Submit</button>
+            <button onClick={handleAddDataSubmit} class="cursor-pointer text-white bg-gray-700 hover:bg-gray-600 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Submit</button>
 
 
         </div>

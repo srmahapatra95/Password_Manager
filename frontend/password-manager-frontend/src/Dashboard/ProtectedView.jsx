@@ -6,7 +6,7 @@ function ProtectedView() {
     const {authState, authDispatch} = useContext(GlobalContext);
     const token = localStorage.getItem("token")
     if(token == null){
-        return <Navigate to='/auth' replace/>
+        return <Navigate to='/'/>
     }
     return <Outlet/>
 }

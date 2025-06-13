@@ -12,11 +12,11 @@ function Dashboard() {
 
   return (
     <>
-    <div className='flex flex-col w-screen h-screen'>
-      <div id='NavBar' className='w-100/100 h-1/10'>
+    <div className='flex flex-col w-screen h-screen bg-gray-900'>
+      <div id='NavBar' className='w-full h-1/10 flex flex-col justify-center'>
         <NavBar/>
       </div>
-      <section className='w-100/100 h-9/10 flex flex-row items-center bg-green-900'>
+      <section className='w-100/100 h-9/10 flex flex-row items-center'>
         <div id='left-panel' className='w-1/4 h-98/100 p-2 '>
           <ProfileCard/>
           <DataList/>
