@@ -18,9 +18,9 @@ export function registerReducer(state,action){
     case 'REGISTER_REQUEST':
       return { ...state, loading: true, error: null };
     case 'REGISTER_SUCCESS':
-      return { ...state, loading: false, success: true };
+      return { ...state, loading: false, success: true, message: action.payload.message };
     case 'REGISTER_FAILURE':
-      return { ...state, loading: false, error: true, success: false };
+      return { ...state, loading: false, error: true, success: false, message: null };
     default:
       return state;
   }

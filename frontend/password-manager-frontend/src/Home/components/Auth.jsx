@@ -25,7 +25,7 @@ function Auth() {
 
             return data
         }
-        get_csrf_token().then(data => console.log(data))
+        get_csrf_token()
 
     },[])
 
@@ -74,7 +74,7 @@ function Auth() {
         return (<>
         <div className='w-xs sm:w-full flex flex-col justify-center items-start p-2 rounded-md'>
             <h5 className='text-white font-bold text-3xl mb-6'>Log In</h5>
-            <p className='text-white mb-2'>Create an Account, <button onClick={(e) => handleChooseAuth(e, 'register')} className='pointer my-1 border-0 text-slate-200 hover:text-indigo-300'>Register</button> </p>
+            <p className='text-white mb-2'>Create an Account, <button onClick={(e) => handleChooseAuth(e, 'register')} className='pointer my-1 border-0 text-indigo-500 hover:text-indigo-300 cursor-pointer'>Register</button> </p>
             <div class="relative z-0 w-full mb-5 group">
                 <input value={loginForm.username} onChange={(e) => handleFormChange(e,'login', 'username')} type="email" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                 <label for="floating_email" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
@@ -113,7 +113,6 @@ function Auth() {
         }
 
         function handleRegister(e){
-            console.log(registerForm, password2)
             if(registerForm.password == password2){
                 const registerAction = register(registerDispatch)
                 registerAction(registerForm)
@@ -126,7 +125,7 @@ function Auth() {
         return(<>
         <div className='w-xs sm:w-full flex flex-col justify-center items-start p-2 rounded-md'>
             <h5 className='text-white font-bold text-3xl mb-6'>Register</h5>
-            I<p className='text-white mb-2'>Have an Account,<button onClick={(e) => handleChooseAuth(e, 'login')} className='pointer my-1 border-0 text-slate-200 hover:text-indigo-300'>Log In</button> </p>
+            I<p className='text-white mb-2'>Have an Account,<button onClick={(e) => handleChooseAuth(e, 'login')} className='pointer my-1 border-0 text-indigo-500 hover:text-indigo-300 cursor-pointer'>Log In</button> </p>
             <div class="relative z-0 w-full mb-5 group">
                 <input value={registerForm.username} onChange={(e) => handleFormChange(e,'register', 'username')} type="email" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                 <label for="floating_email" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>

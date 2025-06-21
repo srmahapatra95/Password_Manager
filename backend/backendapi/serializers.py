@@ -34,11 +34,18 @@ class ProfilePasswordUpdateSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
     
-class UserLoginSerializers(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['username', 'password']
-        extra_kwargs = {'password':{'write_only':False}}
+class UserLoginSerializers(serializers.Serializer):
+    # IMPORTANT: Using Model Serializer here will result in error
+    """
+        ModelSerializer is used to provide a quick standard serialization for CRUD operations,
+        so when your request is POST your serializer will assume that you are creating a new user
+        with the request data for Users model so creation validators will be applied and as the username
+        is unique..., this will result in the error.
+
+        Check the stackoverflow link here : https://stackoverflow.com/questions/60533893/user-with-this-username-already-exists-in-drf-modelserializer-if-not-specified
+    """
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True, write_only=True)
 
 class UserDataDetailSerializers(serializers.ModelSerializer):
     class Meta:

@@ -27,9 +27,10 @@ from .serializers import *
 #https://stackoverflow.com/questions/77026228/how-do-i-setup-csrf-token-for-purely-rest-api-communication-between-two-django-a
 @require_safe # only safe methods GET and HEAD, any operation with PUT, PATCH, POST is rejected
 @never_cache
+@api_view(('GET',))
 def get_csrf(request):
     get_token(request)
-    return JsonResponse({"msg": 'Obtain the token in Cookies...'})
+    return Response(status.HTTP_200_OK)
 
 class UserNameAvailableView(APIView):
     def get(self, request):
@@ -49,12 +50,26 @@ class UserCreationView(APIView):
           
         
     def post(self, request):
-        serializer = UserCreationSerializers(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+        try:
+            serializer = UserCreationSerializers(data=request.data)
+            if not serializer.is_valid():
+                return Response(
+                    {'errors': serializer.errors},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            else:
+                serializer.save()
+                return Response({'message':'User Successfully Created...'}, status=status.HTTP_201_CREATED)      
+
+
+
+
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )    
     
 class UpdateProfilePasswordView(APIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -82,14 +97,38 @@ class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def post(self, request):
-        user = authenticate(username=request.data["username"],password=request.data["password"])
-        if user:
-            login(request, user)
-            serializer=UserLoginSerializers(user)
+        try:
+            serializer = UserLoginSerializers(data=request.data)
 
-            token = Token.objects.get(user=user)
-            return Response({"token":token.key}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if not serializer.is_valid():
+                return Response(
+                    {'errors': serializer.errors},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            username = serializer.validated_data.get('username')
+            password = serializer.validated_data.get('password')
+
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                token = Token.objects.get(user=user)
+                return Response(
+                    {'message': 'Login successful', 'username': user.username,'token':token.key},
+                    status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {'error': 'Invalid username or password'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     
 @api_view(('GET',))
 def Logout(request):

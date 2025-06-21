@@ -16,12 +16,12 @@ function Dashboard() {
       <div id='NavBar' className='w-full h-1/10 flex flex-col justify-center'>
         <NavBar/>
       </div>
-      <section className='w-100/100 h-9/10 flex flex-row items-center'>
-        <div id='left-panel' className='w-1/4 h-98/100 p-2 '>
+      <section className='w-100/100 h-9/10 flex flex-row items-center justify-around'>
+        <div id='left-panel' className='w-1/4 h-98/100 p-2'>
           <ProfileCard/>
           <DataList/>
         </div>
-        <div id='right-panel' className='w-3/4 h-98/100 flex justify-center items-center'>
+        <div id='right-panel' className='w-3/5 h-98/100 flex justify-center items-center'>
           <Tab/>
         </div>
       </section>

@@ -69,6 +69,7 @@ export const register = (dispatch) => async (signUpData) => {
     let data = await response.json()
 
     if (data) {
+      console.log(data)
       dispatch({ type: 'REGSITER_SUCCESS', payload: data });
     } else {
       dispatch({ type: 'REGSITER_FAILURE', payload: response.error });

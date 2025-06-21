@@ -11,6 +11,7 @@ const initialregisterState = {
     loading: false,
     success: false,
     error: false,
+    message: null
 }
 const initialTabState = {
     activeTab:[],
