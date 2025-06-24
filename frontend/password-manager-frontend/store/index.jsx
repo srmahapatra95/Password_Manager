@@ -2,8 +2,8 @@ import React,{ createContext, useReducer , useState} from "react";
 import {authReducer, registerReducer, screenReducer, tabReducer, listViewReducer, deleteItemsReducer} from './reducers/reducers'
 
 const initialAuthState = {
+    id: null,
     username: null,
-    token: null,
     loading:false,
     error: null,
 }
@@ -32,7 +32,7 @@ const initialListViewState = {
     itemslist: [],
 }
 
-initialDeleteItemsState = {
+const initialDeleteItemsState = {
     deleteitems: []
 }
 

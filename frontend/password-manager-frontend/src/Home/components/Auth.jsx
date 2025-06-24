@@ -36,12 +36,6 @@ function Auth() {
 
     function Login(){
         
-        useEffect(() => {
-            const token = localStorage.getItem('token')
-            if(token != null){
-                navigate('/dashboard')
-            }
-        }, [])
 
         const [loginForm, setLoginForm] = useState({
             username: '',
@@ -65,7 +59,7 @@ function Auth() {
 
         function handleLogin(e){
             const csrftoken = getCookie('csrftoken')
-            const loginAction = login(authDispatch)
+            const loginAction = login(authDispatch, navigate)
             loginAction(loginForm, csrftoken)
 
         }

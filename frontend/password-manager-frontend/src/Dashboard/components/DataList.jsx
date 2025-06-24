@@ -67,7 +67,7 @@
                 {listViewState.itemslist.length !== 0 ? 
                     (<>{viewitems}</>) : 
                     (
-                        <div className="text-black text-lg">
+                        <div className="text-slate-300 text-bold flex items-center justify-center text-lg">
                             <p>No items to display</p>
                         </div>
                     )
@@ -75,10 +75,9 @@
             </>
         )
     }
-    console.log("Ouside : ",listViewState.itemslist.length,listViewState.itemslist)
 
     return(<>
-    <div class="max-w-md my-1 h-7/10 flex flex-col">   
+    <div class="max-w-md my-1 h-7/10 flex flex-col border-b-4 border-slate-800">   
         <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
         <div class="relative m-1">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

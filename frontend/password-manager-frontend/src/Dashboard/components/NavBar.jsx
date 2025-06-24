@@ -88,8 +88,10 @@ function NavBar() {
   return (
     <>
 
-    <div className=' bg-gray-900 p-4 flex flex-row justify-between items-center'>
-          <h3 className='font-mono text-slate-300 text-xl font-bold'>Password Manager</h3>
+    <div className='bg-gray-900 p-4 flex flex-row justify-between items-center'>
+        <div className='w-3/10 p-2 flex justify-center items-center'>
+            <h3 className='font-mono text-slate-300 text-xl font-bold'>Password Manager</h3>
+        </div>
         <div className='relative cursor-pointer'>
             <button onClick={handleToggleDropDown} type="button" class="text-white font-bold hover:bg-slate-800 p-2 flex justify-center items-center rounded-full cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">

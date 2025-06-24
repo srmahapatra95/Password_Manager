@@ -21,8 +21,6 @@ function DeleteData(){
     const [checkState, setCheckState] = useState(initialCheckState)
     const {tabState, tabDispatch} = useContext(GlobalContext)    
 
-    console.log(checkState)
-
     const [deleteAllValue, setDeleteAllValue] = useState(false)
 
     function handleSelectAllToDelete(){
@@ -38,6 +36,8 @@ function DeleteData(){
     }
     function handleDeleteData(){
     const remainingItems = listViewState.itemslist.filter(item => !checkState[item.id]);
+    console.log(remainingItems);
+    
     listViewDispatch({ type: 'LOAD_ITEM', payload: remainingItems });
     tabDispatch({type:'REINITIALIZE_TAB', payload:[]})
 

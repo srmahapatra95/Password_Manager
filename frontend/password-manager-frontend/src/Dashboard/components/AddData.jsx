@@ -1,7 +1,10 @@
 import React,{useContext, useEffect,useRef, useState} from "react";
 import { GlobalContext } from "../../../store";
+import { add_data } from "../../../store/actions/actions";
+
 function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
     const {screenState, screenDispatch} = useContext(GlobalContext)
+    const {authState, authDispatch} = useContext(GlobalContext)
     const {listViewState, listViewDispatch} = useContext(GlobalContext);
     const [details_for, setDetails_for] = useState('')
     const [username, setUsername] = useState('')
@@ -11,32 +14,36 @@ function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
     const [password2, setPassword2] = useState('')
     const [info, setInfo] = useState('')
 
+    console.log("The auth state is : ", authState)
 
     function handleAddDataSubmit(){
         console.log("clicked submit")
         if(password !== '' && password2 !== ''){
-        if(password == password2){
-            data = {
-                    user:11,
-                    details_for:details_for,
-                    username:username,
-                    email:email,
-                    mobile:mobile,
-                    password:password,
-                    info:info,
+            if(password == password2){
+                let data = {
+                        user:authState.id,
+                        details_for:details_for,
+                        username:username,
+                        email:email,
+                        mobile:mobile,
+                        password:password,
+                        info:info,
+                }
+                const token = localStorage.getItem('token')
+                const addDataAction = add_data(listViewDispatch)
+                addDataAction(data, token)
+            }else{
+                alert('Password didnot match')
             }
-            alert('IMplement the logic to add data')
-            listViewDispatch({type:'ADD_ITEM', payload: data})
-        }else{
-            alert('Password didnot match')
-        }
         }
         setDetails_for('')
         setUsername('')
         setEmail('')
         setMobile('')
         setPassword('')
+        setPassword2('')
         setInfo('')
+        document.getElementById('close-screen-btn').click();
 
     }
 

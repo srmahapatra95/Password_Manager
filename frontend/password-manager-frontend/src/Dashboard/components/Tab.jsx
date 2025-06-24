@@ -84,9 +84,9 @@ function Tab() {
         }
 
         return (
-            <div className={`w-15/100 h-98/100 p-2 border-b-3 border-rose-50 flex flex-row justify-between items-center cursor-pointer ${isActiveTab ? 'bg-slate-600 border-t-3 rounded-t-md text-slate-100 border-slate-600' : 'bg-slate-800 text-slate-100 border-slate-600'}`}>
-                <div onClick={handleTabClick} className="w-full h-full p-1 flex items-center" title={data.name}>
-                    <p>{data.details_for}</p>
+            <div className={`w-20/100 h-98/100 p-2 border-b-3 border-rose-50 flex flex-row justify-between items-center cursor-pointer ${isActiveTab ? 'bg-slate-600 border-t-3 rounded-t-md text-slate-100 border-slate-600' : 'bg-slate-800 text-slate-100 border-slate-600'}`}>
+                <div onClick={handleTabClick} className="w-full h-full p-1 flex flex-row items-center" title={data.name}>
+                    <p className='mx-2'>{data.details_for.length > 8 ? data.details_for.slice(0,6)+'...': data.details_for}</p>
                 </div>
                 <button onClick={handleCloseTab} className="hover:bg-rose-50 hover:text-black rounded-full cursor-pointer" title="Close tab">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
@@ -104,17 +104,29 @@ function Tab() {
   return (
     <>
     <div className='flex flex-col justify-center items-center w-98/100 h-98/100'>
-        <div id='tab-buttons' className='w-full h-1/10 flex-flex-row'>
-            {buttonList.length > 0 && (
-                <div className="flex flex-row h-full items-center overflow-x-auto no-scrollbar">{buttonList}</div>
-            )}
-        </div>
-        <div id='tab-content' className='w-full h-9/10 bg-gray-900'>
-            {tabState.tabContentList.length > 0 && (
-                <div className="w-full h-full bg-slate-800">
-                    <TabContent />
-                </div>
-            )}        </div>
+        {buttonList.length !== 0?(<>
+
+            <div id='tab-buttons' className='w-full h-1/10 flex-flex-row'>
+                {buttonList.length > 0 && (
+                    <div className="flex flex-row h-full items-center overflow-x-auto no-scrollbar">{buttonList}</div>
+                )}
+            </div>
+            <div id='tab-content' className='w-full h-9/10 bg-gray-900'>
+                {tabState.tabContentList.length > 0 && (
+                    <div className="w-full h-full bg-slate-800">
+                        <TabContent />
+                    </div>
+                )}   
+            </div>
+
+        </>):(<>
+            <div className='w-full h-full flex flex-col items-center justify-center border-4 border-slate-800 rounded-md'>
+                <p className='text-xl text-bold text-slate-300 font-mono'>
+                    Your Data Will Be Displayed Here.
+                </p>
+            </div>
+        </>)}
+        
     </div>
     </>
   )

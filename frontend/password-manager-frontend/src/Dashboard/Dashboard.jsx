@@ -1,14 +1,18 @@
-import {React ,useState, useContext } from 'react'
-import { Link } from 'react-router'
+import {React ,useState, useContext , useEffect, Suspense, lazy} from 'react'
+import { Link, useNavigate } from 'react-router'
 import NavBar from './components/NavBar'
-import DataList from './components/DataList'
+// import DataList from './components/DataList'
 import ProfileCard from './components/ProfileCard'
 import Tab from './components/Tab'
 import Screen from './components/Screen'
 import { GlobalContext } from '../../store'
+const LazyDataList = lazy(() => import('./components/DataList'))
+
 
 function Dashboard() {
     const {screenState, screenDispatch} = useContext(GlobalContext)
+    const {authState, authDispatch} = useContext(GlobalContext)
+
 
   return (
     <>
@@ -19,7 +23,9 @@ function Dashboard() {
       <section className='w-100/100 h-9/10 flex flex-row items-center justify-around'>
         <div id='left-panel' className='w-1/4 h-98/100 p-2'>
           <ProfileCard/>
-          <DataList/>
+          <Suspense fallback={<p>Loading...</p>}>
+            <LazyDataList/>
+          </Suspense>
         </div>
         <div id='right-panel' className='w-3/5 h-98/100 flex justify-center items-center'>
           <Tab/>

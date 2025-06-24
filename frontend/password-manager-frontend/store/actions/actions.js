@@ -1,32 +1,33 @@
 const API_URL = 'http://localhost:8001'
-export const is_authenticated = (dispatch) => async () =>{
-  try{
-    const URL = `${API_URL}/api/is_authenticated/`
+
+
+export const is_authenticated_user = (dispatch) => async (token) => {
+    const URL = `${API_URL}/api/is-authenticated-user/`
     const response  = await fetch(URL,{
-      method: 'GET',
-      withCredentials: true,
-      credentials: "include",
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        "Authorization": `Token ${localStorage.getItem('token')}`, 
+        "Authorization": `Token ${token}`, 
       },
-    });
-    const data = await response.json()
-    if(data.is_authenticated){
-      dispatch({type:"LOGIN_SUCCESS", payload: data})
-    }
-  }catch(error){
-    console.log(error)
-  }
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.username){
+        dispatch({type: 'AUTHENTICATION_SUCCESS', payload: data})
+      }
+    })
+    .catch(error => {
+      console.error(error)
+    })
 }
 
-export const login = (dispatch) => async (credentials, csrftoken) => {
-  try {
+
+
+export const login = (dispatch,navigate) => async (credentials, csrftoken) => {
     dispatch({ type: 'LOGIN_REQUEST' });
 
-    // Simulate an API call (replace with actual API call)
     const URL = `${API_URL}/api/login/`
-    const response = await fetch(URL,{
+    fetch(URL,{
             method: 'POST',
             headers: {
               'Accept': 'application/json',
@@ -35,21 +36,29 @@ export const login = (dispatch) => async (credentials, csrftoken) => {
 
             },
             body: JSON.stringify(credentials)
-          });
-    let data = await response.json()
-
-    if (data) {
-      dispatch({ type: 'LOGIN_SUCCESS', payload: data });
+    })
+    .then(resposne => resposne.json())
+    .then(data => {
+      if(!data.token){
+          dispatch({ type: 'LOGIN_FAILURE', payload: error.message});
+          navigate('/')
+      }
+      else{
       localStorage.setItem('token', data.token)
+      dispatch({ type: 'LOGIN_SUCCESS'});
+      navigate('/dashboard')
+      }
 
-    } else {
-      dispatch({ type: 'LOGIN_FAILURE', payload: response.error });
+    })
+    .catch(error => {
+      console.error(error)
+    })    
 
-    }
-  } catch (error) {
-    dispatch({ type: 'LOGIN_FAILURE', payload: error.message });
 
-  }
+
+
+
+
 };
   
 
@@ -69,7 +78,6 @@ export const register = (dispatch) => async (signUpData) => {
     let data = await response.json()
 
     if (data) {
-      console.log(data)
       dispatch({ type: 'REGSITER_SUCCESS', payload: data });
     } else {
       dispatch({ type: 'REGSITER_FAILURE', payload: response.error });
@@ -92,10 +100,9 @@ export const logout = () => async (token) => {
             },
           });
     let data = await response.status
-    console.log(data)
     localStorage.removeItem("token")
   }catch(error){
-    console.log(error)
+    console.error(error)
   }
 }
   
@@ -113,19 +120,18 @@ export const fetchdatalist = (dispatch) => async (token) => {
             },
           });
     let data = await response.json()
-    console.log("Actions:",data)
     if (Array.isArray(data)) {
       dispatch({ type: 'LOAD_ITEM', payload: data });
     } else {
-      alert(data.msg)
+      alert(data.message)
     }
   } catch (error) {
-      console.log(error)
+      console.error(error)
 
   }
 };
   
-export const add_data = (dispatch) => async (data,token) => {
+export const add_data = (dispatch) => async (data_obj,token) => {
   try {
 
     const URL = `${API_URL}/api/add-data/`
@@ -136,17 +142,106 @@ export const add_data = (dispatch) => async (data,token) => {
               'Content-Type': 'application/json',
               'Authorization': `Token ${token}`,
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data_obj)
           });
     let data = await response.json()
-    console.log("Actions:",data)
-    if (Array.isArray(data)) {
-      dispatch({ type: 'ADD_ITEM', payload: data });
+    if (data !== null) {
+      alert(data.key)
+      delete data.key
+      dispatch({ type: 'ADD_ITEM', payload: data.data});
     } else {
-      alert(data.msg)
+      console.log('Some Error...')
     }
   } catch (error) {
       console.log(error)
 
   }
 };
+
+export const patch_update_data = (setStateFunc, id) => async (data_obj, token) => {
+  const URL = `${API_URL}/api/data-detail/${id}/`
+  fetch(URL,{
+            method: 'PATCH',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`,
+            },
+            body: JSON.stringify(data_obj)
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (!data.key){
+      for(let [keyval, value] of Object.entries(setStateFunc)){
+        setStateFunc[keyval](data[keyval])
+      }
+    }else{
+      for(let [keyval, value] of Object.entries(setStateFunc)){
+        setStateFunc[keyval](data.data[keyval])
+      }
+    }
+
+  })
+  .catch(error => console.error('Error in request...', error))
+
+}
+
+export const delete_data = (removeFromView, id) => async (token) => {
+  const URL = `${API_URL}/api/data-detail/${id}/`
+  fetch(URL,{
+            method: 'DELETE',
+            headers: {
+              'Authorization': `Token ${token}`,
+            },
+  })
+  .then(response => {
+
+    if(response.status === 204){
+      removeFromView()
+    }
+  })
+  .catch(error => console.error('Error in request...', error))
+
+}
+
+export const decrypt_password = () => async (data_obj, token) => {
+  const URL = `${API_URL}/api/show-password/`
+  fetch(URL,{
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': `Token ${token}`,
+            },
+            body: JSON.stringify(data_obj)
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log(data)
+  })
+  .catch(error => console.error('Error in request...', error))
+
+}
+
+export const is_authenticated = (dispatch, closeScreen) => async (data_obj) => {
+    const URL = `${API_URL}/api/update-password-data/`
+    const response  = await fetch(URL,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Token ${localStorage.getItem('token')}`, 
+      },
+      body: JSON.stringify(data_obj)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.is_authenticated){
+        dispatch({type: 'ENABLE', payload: true})
+        closeScreen()
+      }
+    })
+    .catch(error => {
+      console.log("The error is : ", error)
+    })
+}
+

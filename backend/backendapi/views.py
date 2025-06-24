@@ -34,12 +34,25 @@ def get_csrf(request):
 
 class UserNameAvailableView(APIView):
     def get(self, request):
-        username = request.query_params.get('username')
-        user = User.objects.filter(username=username).exists()
-        print(user)
-        if not user:
-            return Response({'msg':'Available'}, status=status.HTTP_200_OK)
-        return Response({'msg':'Not Available'}, status=status.HTTP_200_OK)
+        try:
+            username = request.query_params.get('username')
+            serializer = UserNameAvailableSerializers(data={'username':username})
+
+            if not serializer.is_valid():
+                return Response(
+                    {'errors': serializer.errors},
+                    status=status.HTTP_400_BAD_REQUEST
+                )            
+            user_exists = User.objects.filter(username=username).exists()
+            if not user_exists:
+                return Response({'message':'Available'}, status=status.HTTP_200_OK)
+            return Response({'message':'Not Available'}, status=status.HTTP_409_CONFLICT)
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )  
+
 
 class UserCreationView(APIView):
     """
@@ -71,25 +84,6 @@ class UserCreationView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )    
     
-class UpdateProfilePasswordView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    
-    def post(self, request):
-        user = authenticate(username=request.user.username,password=request.data["password"])
-        if user:
-            return Response({"is_authenticated":"True"}, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-    def patch(self, request):
-        user = request.user
-        serializer = ProfilePasswordUpdateSerializer(user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response({'message':'Password has been updated'}, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class LoginView(APIView):
 
@@ -114,7 +108,7 @@ class LoginView(APIView):
             if user is not None:
                 token = Token.objects.get(user=user)
                 return Response(
-                    {'message': 'Login successful', 'username': user.username,'token':token.key},
+                    {'message': 'Login successful','token':token.key},
                     status=status.HTTP_200_OK
                 )
             else:
@@ -129,6 +123,27 @@ class LoginView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+class IsAuthenticatedUserView(APIView):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            user = User.objects.get(username=request.user)
+            if not user:
+                return Response(
+                    {'error': '401 UNAUTHORIZED'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            return Response(
+                    {'id':user.id, 'username': user.username},
+                    status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     
 @api_view(('GET',))
 def Logout(request):
@@ -138,13 +153,22 @@ def Logout(request):
 class UserDataListView(APIView):
     authentication_classes = [TokenAuthentication,SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = UserDataDetailSerializers
+    serializer_class = UserDataListSerializers
 
 
     def get(self, request):
-        instance = UserData.objects.filter(user=request.user)
-        serializer = UserDataDetailSerializers(instance,many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            instance = UserData.objects.filter(user=request.user)
+            serializer = UserDataListSerializers(instance,many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
 
 class AddUserDataView(APIView):
 
@@ -153,12 +177,75 @@ class AddUserDataView(APIView):
     serializer_class = UserDataDetailSerializers
 
     def post(self, request):
-        serializer = UserDataDetailSerializers(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer = UserDataDetailSerializers(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                encryption_key = getattr(serializer, 'encryption_key', {})
+                print({'key':encryption_key,'data':serializer.data})
+                return Response({'key':encryption_key,'data':serializer.data}, status=status.HTTP_200_OK)
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+
+class ShowPasswordView(APIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]  
+
+    def post(self, request):
+        try:
+            print(request.data)
+            serializer = ShowPasswordSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response(
+                    serializer.errors, status.HTTP_400_BAD_REQUEST
+                )
+            print(serializer.decrypt(serializer.data))
+            return Response(serializer.decrypt(serializer.data), status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+class UpdatePasswordDataView(APIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
     
+    def post(self, request):
+        try:
+            user = authenticate(username=request.user.username,password=request.data["password"])
+            if user:
+                return Response({"is_authenticated":True}, status=status.HTTP_200_OK)
+            return Response({"is_authenticated":False}, status=status.HTTP_401_UNAUTHORIZED)
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            ) 
+
+
+    def patch(self, request):
+        try:
+            user = request.user
+            serializer = ProfilePasswordUpdateSerializer(user, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({'message':'Password has been updated'}, status=status.HTTP_200_OK)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            ) 
+
+        
+
 class UserDataDetailView(APIView):
     serializer_class = UserDataDetailSerializers
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -172,12 +259,13 @@ class UserDataDetailView(APIView):
         try:
             instance = UserData.objects.get(user=user,id=pk)
             serializer = UserDataDetailSerializers(instance)
-        except:
-            instance = None
-
-        if instance:
             return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
     def patch(self, request, pk):
         user = self.get_object(request)
         try:
@@ -185,18 +273,27 @@ class UserDataDetailView(APIView):
             serializer = UserDataDetailSerializers(instance, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
+                encryption_key = getattr(serializer, 'encryption_key', {})
+                if not encryption_key:
+                    print(serializer.data)
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response({'key':encryption_key,'data':serializer.data}, status=status.HTTP_200_OK)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        except:
-            instance = None
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
     def delete(self, request, pk):
         user = self.get_object(request)
         try:
             instance = UserData.objects.get(user=user,id=pk)
             instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except:
-            instance = None        
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 

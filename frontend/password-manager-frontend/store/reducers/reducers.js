@@ -3,11 +3,13 @@ export function authReducer(state, action) {
     case 'LOGIN_REQUEST':
       return { ...state, loading: true, error: null };
     case 'LOGIN_SUCCESS':
-      return { ...state, loading: false, username: action.payload.username, token: action.payload.token };
+      return { ...state, loading: false};
     case 'LOGIN_FAILURE':
       return { ...state, loading: false, error: action.payload };
     case 'LOGOUT':
-      return { ...state, username: null, token: null, loading: false, error: null};
+      return { ...state, username: null, loading: false, error: null};
+    case 'AUTHENTICATION_SUCCESS':
+      return { ...state, username: action.payload.username, id:action.payload.id };
     default:
       return state;
   }
