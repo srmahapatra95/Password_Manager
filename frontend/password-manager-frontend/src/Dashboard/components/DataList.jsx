@@ -1,6 +1,8 @@
   import {React ,useState,useContext, useEffect } from 'react'
   import { GlobalContext } from '../../../store';
   import { fetchdatalist } from '../../../store/actions/actions';
+  import { useToast } from '../../../hooks/useToast';
+
   function DataList(){
 
     const {listViewState, listViewDispatch} = useContext(GlobalContext);
@@ -8,13 +10,14 @@
     const {tabState, tabDispatch} = useContext(GlobalContext)
     const {screenState,screenDispatch} = useContext(GlobalContext)
     const [filterText, setFilterText] = useState('')
+    const toast = useToast();
 
     const {id, setId, user, setUser, details_for, setDetails_for, username, setUsername,email,setEmail, mobile,setMobile, password, setPassword, info, setInfo} = useContext(GlobalContext)
 
     useEffect(() => {
 
         const token = localStorage.getItem('token')
-        const fetchData = fetchdatalist(listViewDispatch);
+        const fetchData = fetchdatalist(listViewDispatch, toast);
         fetchData(token)
     },[])
 
@@ -23,7 +26,7 @@
         screenDispatch({type: 'DISABLE_TAB_SCREEN', payload: false})
         let isPresent = tabState.tabButtonList.filter((item) => item.id == data.id)
         if(isPresent.length > 0){
-            alert("Tab is Open")
+            
         }else{
             setId(data.id)
             setUser(data.user)
@@ -77,7 +80,7 @@
     }
 
     return(<>
-    <div class="max-w-md my-1 h-7/10 flex flex-col border-b-4 border-slate-800">   
+    <div class="w-full my-1 h-7/10 flex flex-col border-b-4 border-slate-800">   
         <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
         <div class="relative m-1">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">

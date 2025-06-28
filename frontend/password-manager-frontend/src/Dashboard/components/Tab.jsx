@@ -59,8 +59,6 @@ function Tab() {
             screenDispatch({ type: 'DISABLE', payload: false });
             screenDispatch({type: 'DISABLE_TAB_SCREEN', payload: false})
             
-            console.log(data, last_index)
-            // If we're closing the active tab, switch to the previous tab first
             if (isActiveTab && currentTabIndex > 0) {
                 const prevTab = tabState.activeTab[currentTabIndex - 1];
                 tabDispatch({ type: 'UPDATE_ACTIVE_TAB', payload: prevTab });

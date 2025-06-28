@@ -1,7 +1,7 @@
 import React,{useContext, useEffect,useRef, useState} from "react";
 import { GlobalContext } from "../../../store";
 import {is_authenticated, decrypt_password } from "../../../store/actions/actions";
-
+import { useToast } from "../../../hooks/useToast";
 function TabContentScreen({chooseTabContentScreen, setChooseTabContentScreen}){
 
     const {screenState, screenDispatch} = useContext(GlobalContext)
@@ -9,6 +9,8 @@ function TabContentScreen({chooseTabContentScreen, setChooseTabContentScreen}){
 
     const [decryptToken, setDecryptToken] = useState('')
     const [accountPassword, setAccountPassword] = useState('')
+
+    const toast = useToast();
 
     function handleCloseScreen(){
         screenDispatch({type: 'DISABLE_TAB_SCREEN', payload: false})
@@ -18,15 +20,14 @@ function TabContentScreen({chooseTabContentScreen, setChooseTabContentScreen}){
             id: id,
             key: decryptToken
         }
-        console.log(data)
         const token = localStorage.getItem('token')
-        const decryptPasswordAction = decrypt_password()
+        const decryptPasswordAction = decrypt_password(toast)
         decryptPasswordAction(data, token)
         handleCloseScreen()
     }
     function handleAccountPasswordSubmit(){
         
-        const isAuthenticatedAction = is_authenticated(screenDispatch, handleCloseScreen)
+        const isAuthenticatedAction = is_authenticated(screenDispatch, toast,handleCloseScreen)
         const data = {
             password: accountPassword
         }
@@ -35,7 +36,7 @@ function TabContentScreen({chooseTabContentScreen, setChooseTabContentScreen}){
     }
     return (
         <> 
-        <div className=" text-white absolute w-full h-full opaque">
+        <div className=" text-white absolute top-0 left-0 w-full h-full opaque">
             <div className="w-full p-2 flex flex-row justify-end">
                 <button onClick={handleCloseScreen} className="text-white hover:text-black hover:bg-rose-50 rounded-full cursor-pointer">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
@@ -46,15 +47,15 @@ function TabContentScreen({chooseTabContentScreen, setChooseTabContentScreen}){
             </div>
             {chooseTabContentScreen == 'show' ? (<>
             <div className="w-full h-95/100 flex flex-col items-center justify-center">
-                <label className="text-white text-3xl my-2" >Enter the Token</label>
-                <input value={decryptToken} onChange={(e)=>setDecryptToken(e.target.value)} className="text-white border-2 border-slate-300 w-8/10 h-10 indent-2 my-2" type="password"/>
-                <button onClick={handleTokenSubmit} className="text-white border-2 border-slate-300 w-8/10 h-10 cursor-pointer my-2 hover:text-black hover:bg-slate-300">Submit</button>
+                <label className="text-white font-mono font-bold text-3xl my-2" >Enter the Token</label>
+                <input value={decryptToken} onChange={(e)=>setDecryptToken(e.target.value)} className="text-white border-2 border-slate-300 w-8/10 h-10 indent-2 my-2 rounded-md" type="password"/>
+                <button onClick={handleTokenSubmit} className="text-white font-bold border-2 border-slate-300 w-8/10 h-10 cursor-pointer my-2 hover:text-black hover:bg-slate-300 rounded-md">Submit</button>
             </div>
             </>):(<>
             <div className="w-full h-95/100 flex flex-col items-center justify-center ">
-                <label className="text-white text-3xl my-2" >Enter the Account Password</label>
-                <input value={accountPassword} onChange={(e) => setAccountPassword(e.target.value)} className="text-white border-2 border-slate-300 w-8/10 h-10 indent-2 my-2" type="password"/>
-                <button onClick={handleAccountPasswordSubmit} className="text-white border-2 border-slate-300 w-8/10 h-10 cursor-pointer my-2 hover:text-black  hover:bg-slate-300">Submit</button>
+                <label className="text-white font-mono font-bold text-3xl my-2" >Enter the Account Password</label>
+                <input value={accountPassword} onChange={(e) => setAccountPassword(e.target.value)} className="text-white border-2 border-slate-300 w-8/10 h-10 indent-2 my-2 rounded-md" type="password"/>
+                <button onClick={handleAccountPasswordSubmit} className="text-white font-bold border-2 border-slate-300 w-8/10 h-10 cursor-pointer my-2 hover:text-black  hover:bg-slate-300 rounded-md">Submit</button>
             </div>  
             </>)}
 

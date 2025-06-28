@@ -4,6 +4,7 @@ import { Link, useNavigate } from 'react-router'
 import { GlobalContext } from '../../../store';
 import { register ,login} from '../../../store/actions/actions';
 import getCookie from '../../../utils/utils'
+import { useToast } from '../../../hooks/useToast';
 
 function Auth() {
 
@@ -11,7 +12,7 @@ function Auth() {
     const {registerState, registerDispatch} = useContext(GlobalContext);
     const navigate = useNavigate();
     const [authChooser, setAuthChooser] = useState('login');
-
+    const toast = useToast();
     useEffect(()=>{
 
         let ct = null
@@ -59,7 +60,7 @@ function Auth() {
 
         function handleLogin(e){
             const csrftoken = getCookie('csrftoken')
-            const loginAction = login(authDispatch, navigate)
+            const loginAction = login(authDispatch, navigate,toast)
             loginAction(loginForm, csrftoken)
 
         }
@@ -68,7 +69,6 @@ function Auth() {
         return (<>
         <div className='w-xs sm:w-full flex flex-col justify-center items-start p-2 rounded-md'>
             <h5 className='text-white font-bold text-3xl mb-6'>Log In</h5>
-            <p className='text-white mb-2'>Create an Account, <button onClick={(e) => handleChooseAuth(e, 'register')} className='pointer my-1 border-0 text-indigo-500 hover:text-indigo-300 cursor-pointer'>Register</button> </p>
             <div class="relative z-0 w-full mb-5 group">
                 <input value={loginForm.username} onChange={(e) => handleFormChange(e,'login', 'username')} type="email" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                 <label for="floating_email" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
@@ -79,8 +79,10 @@ function Auth() {
             </div>
             <div className="grid md:grid-cols-2 md:gap-6">
             </div>
-            <button onClick={(e) => handleLogin(e)} className="w-full text-white bg-violet-900 hover:bg-violet-800  font-medium rounded-lg text-sm px-5 py-2.5 text-center">Submit</button>
+            <button onClick={(e) => handleLogin(e)} className="w-full font-bold text-white bg-gray-700 hover:bg-gray-600  font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer">Submit</button>
             <hr className=" w-full my-2 h-1 text-slate-400 rounded-sm dark:bg-gray-700"/>
+            <p className='text-white mb-2'>Create an Account, <button onClick={(e) => handleChooseAuth(e, 'register')} className='pointer my-1 border-0 text-indigo-500 hover:text-indigo-300 cursor-pointer'>Register</button> </p>
+
         </div>
         </>)
     }
@@ -108,10 +110,10 @@ function Auth() {
 
         function handleRegister(e){
             if(registerForm.password == password2){
-                const registerAction = register(registerDispatch)
+                const registerAction = register(registerDispatch, toast)
                 registerAction(registerForm)
             }else{
-                alert('Not the same password')
+                toast.error('The two passwords didnot match...')
             }
         }
 
@@ -119,7 +121,6 @@ function Auth() {
         return(<>
         <div className='w-xs sm:w-full flex flex-col justify-center items-start p-2 rounded-md'>
             <h5 className='text-white font-bold text-3xl mb-6'>Register</h5>
-            I<p className='text-white mb-2'>Have an Account,<button onClick={(e) => handleChooseAuth(e, 'login')} className='pointer my-1 border-0 text-indigo-500 hover:text-indigo-300 cursor-pointer'>Log In</button> </p>
             <div class="relative z-0 w-full mb-5 group">
                 <input value={registerForm.username} onChange={(e) => handleFormChange(e,'register', 'username')} type="email" name="floating_email" id="floating_email" className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " required />
                 <label for="floating_email" className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">Username</label>
@@ -134,8 +135,10 @@ function Auth() {
             </div>
             <div className="grid md:grid-cols-2 md:gap-6">
             </div>
-            <button onClick={(e) => handleRegister(e)} className="w-full text-white bg-violet-900 hover:bg-violet-800  font-medium rounded-lg text-sm px-5 py-2.5 text-center">Submit</button>
+            <button onClick={(e) => handleRegister(e)} className="w-full text-white bg-gray-700 hover:bg-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center cursor-pointer">Submit</button>
             <hr className=" w-full my-2 h-1 text-slate-400 rounded-sm dark:bg-gray-700"/>
+            I<p className='text-white mb-2'>Have an Account,<button onClick={(e) => handleChooseAuth(e, 'login')} className='pointer my-1 border-0 text-indigo-500 hover:text-indigo-300 cursor-pointer'>Log In</button> </p>
+
         </div>
         </>)
     }

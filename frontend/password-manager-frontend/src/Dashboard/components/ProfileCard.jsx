@@ -2,9 +2,8 @@ import {React ,useState, useContext } from 'react'
 import { GlobalContext } from '../../../store';
 function ProfileCard(){
     const {authState, authDispatch} = useContext(GlobalContext)
-    console.log(authState)
     return(<>
-      <div className="h-3/10  bg-slate-800 p-3 sm:flex flex-col justify-center items-center rounded-lg">
+      <div className="h-3/10 w-full bg-slate-800 p-3 sm:flex flex-col justify-center items-center rounded-lg">
           <div className="w-20 h-20 m-2 flex items-center justify-center bg-gray-500 rounded-full">
             <p className='text-slate-300 text-2xl font-bold text-mono'>{authState.username?.slice(0,1).toUpperCase()}</p>
           </div>

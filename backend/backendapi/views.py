@@ -205,7 +205,15 @@ class ShowPasswordView(APIView):
                     serializer.errors, status.HTTP_400_BAD_REQUEST
                 )
             print(serializer.decrypt(serializer.data))
-            return Response(serializer.decrypt(serializer.data), status=status.HTTP_200_OK)
+            if(serializer.decrypt(serializer.data) == 'Could Not Decrypt'):
+                data = {
+                    'error':'Could Not Decrypt'
+                }
+            else:
+                data = {
+                    'key':serializer.decrypt(serializer.data)
+                }                
+            return Response(data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response(
                 {'error': f'Server Error: {str(e)}'},
@@ -297,3 +305,22 @@ class UserDataDetailView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+
+class BulkDeleteView(APIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_object(self, request):
+        return User.objects.get(username=request.user)
+    
+    def delete(self, request):
+        try:
+            user = self.get_object(request)
+            instance = UserData.objects.filter(user=user,id__in=request.data)
+            instance.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

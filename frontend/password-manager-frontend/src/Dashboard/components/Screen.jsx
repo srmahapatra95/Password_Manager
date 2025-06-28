@@ -8,7 +8,6 @@ function Screen(){
     function handleCloseScreen(){
         screenDispatch({type:'HIDE_SCREEN', payload: ''})
     }
-    console.log('Opened screen')
 
     return (
         <div className="absolute top-0 left-0 bg-gray-900 w-screen h-screen flex flex-col">

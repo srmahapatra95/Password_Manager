@@ -1,6 +1,7 @@
 import React,{useContext, useEffect,useRef, useState} from "react";
 import { GlobalContext } from "../../../store";
 import { add_data } from "../../../store/actions/actions";
+import { useToast } from '../../../hooks/useToast';
 
 function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
     const {screenState, screenDispatch} = useContext(GlobalContext)
@@ -13,11 +14,10 @@ function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
     const [password, setPassword] = useState('')
     const [password2, setPassword2] = useState('')
     const [info, setInfo] = useState('')
+    const toast = useToast();
 
-    console.log("The auth state is : ", authState)
 
     function handleAddDataSubmit(){
-        console.log("clicked submit")
         if(password !== '' && password2 !== ''){
             if(password == password2){
                 let data = {
@@ -30,10 +30,10 @@ function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
                         info:info,
                 }
                 const token = localStorage.getItem('token')
-                const addDataAction = add_data(listViewDispatch)
+                const addDataAction = add_data(listViewDispatch, toast)
                 addDataAction(data, token)
             }else{
-                alert('Password didnot match')
+                toast.error('Passwords didnot match')
             }
         }
         setDetails_for('')

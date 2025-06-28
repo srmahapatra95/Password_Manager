@@ -15,6 +15,7 @@ urlpatterns = [
     path('api/datalist/', UserDataListView.as_view(), name='datalist'),
     path('api/add-data/', AddUserDataView.as_view(), name='add-data'),
     path('api/data-detail/<int:pk>/', UserDataDetailView.as_view(), name='data-detail'),
+    path('api/bulk-delete/', BulkDeleteView.as_view(), name='data-detail'),
     path('api/show-password/',ShowPasswordView.as_view(),name='show-password'),
     path('api/get-csrf/', get_csrf, name='get-csrf'),
     re_path(r'^.*', TemplateView.as_view(template_name="index.html"), name='index'),

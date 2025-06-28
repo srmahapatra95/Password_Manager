@@ -73,10 +73,14 @@ class ShowPasswordSerializer(serializers.Serializer):
         id = validated_data.get('id')
         key = validated_data.get('key')
         token = UserData.objects.get(id=id).password
-        fkey = str.encode(key)
-        f = Fernet(fkey)
-        passwd = f.decrypt(str.encode(token))
-        passwd = passwd.decode()
+        try:
+
+            fkey = str.encode(key)
+            f = Fernet(fkey)
+            passwd = f.decrypt(str.encode(token))
+            passwd = passwd.decode()
+        except Exception as e:
+            passwd = 'Could Not Decrypt'
         return passwd
 class UserDataDetailSerializers(serializers.ModelSerializer):
 
@@ -120,4 +124,3 @@ class UserDataDetailSerializers(serializers.ModelSerializer):
 
 
         return instance
-    
