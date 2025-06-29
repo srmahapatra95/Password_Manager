@@ -8,6 +8,7 @@ import './index.css'
 import App from './Home/App.jsx'
 import Dashboard from './Dashboard/Dashboard.jsx'
 import ProtectedView from './Dashboard/ProtectedView.jsx';
+import Settings from './Settings/Settings.jsx'
 
 
 const router = createBrowserRouter([
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
         path: '/dashboard',
         element:<Dashboard/>,
       },
+      {
+        path:'/settings',
+        element:<Settings/>
+      }
     ]
   },
 
