@@ -25,7 +25,12 @@ const router = createBrowserRouter([
       },
       {
         path:'/settings',
-        element:<Settings/>
+        children:[
+            {
+            index:true,
+            element:<Settings/>,
+          },
+        ]
       }
     ]
   },

@@ -82,7 +82,7 @@ function Tab() {
         }
 
         return (
-            <div className={`w-20/100 h-98/100 p-2 border-b-3 border-rose-50 flex flex-row justify-between items-center cursor-pointer ${isActiveTab ? 'bg-slate-600 border-t-3 rounded-t-md text-slate-100 border-slate-600' : 'bg-slate-800 text-slate-100 border-slate-600'}`}>
+            <div className={`w-20/100 h-98/100 p-2 border-b-3 flex flex-row justify-between items-center cursor-pointer ${isActiveTab ? 'bg-slate-300 dark:bg-slate-600 border-t-3 rounded-t-md text-slate-900 dark:text-slate-100 border-slate-200 dark:border-slate-600' : 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-slate-400 dark:border-slate-600 border-slate-300'}`}>
                 <div onClick={handleTabClick} className="w-full h-full p-1 flex flex-row items-center" title={data.name}>
                     <p className='mx-2'>{data.details_for.length > 8 ? data.details_for.slice(0,6)+'...': data.details_for}</p>
                 </div>
@@ -109,17 +109,17 @@ function Tab() {
                     <div className="flex flex-row h-full items-center overflow-x-auto no-scrollbar">{buttonList}</div>
                 )}
             </div>
-            <div id='tab-content' className='w-full h-9/10 bg-gray-900'>
+            <div id='tab-content' className='w-full h-9/10 bg-gray-200 dark:bg-gray-900'>
                 {tabState.tabContentList.length > 0 && (
-                    <div className="w-full h-full bg-slate-800">
+                    <div className="w-full h-full bg-slate-200 dark:bg-slate-800">
                         <TabContent />
                     </div>
                 )}   
             </div>
 
         </>):(<>
-            <div className='w-full h-full flex flex-col items-center justify-center border-4 border-slate-800 rounded-md'>
-                <p className='text-xl text-bold text-slate-300 font-mono'>
+            <div className='w-full h-full flex flex-col items-center justify-center border-4 border-slate-300 dark:border-slate-800 rounded-md'>
+                <p className='text-xl text-bold text-slate-900 dark:text-slate-300 font-mono'>
                     Your Data Will Be Displayed Here.
                 </p>
             </div>

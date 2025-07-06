@@ -144,6 +144,111 @@ class IsAuthenticatedUserView(APIView):
                 {'error': f'Server Error: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+class GetUserSettingsView(APIView):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            user = User.objects.get(username=request.user)
+            user_settings = UserSettings.objects.get(user=user)
+            serializer = UserSettingSerializer(user_settings)
+            if not user:
+                return Response(
+                    {'error': '401 UNAUTHORIZED'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            return Response(
+                    serializer.data,
+                    status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+class SetUserSettingsView(APIView):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def patch(self, request):
+        try:
+            user = User.objects.get(username=request.user)
+            user_settings = UserSettings.objects.get(user=user)
+            print(request.data)
+            serializer = UserSettingSerializer(user_settings,data=request.data,partial=True)
+            if not serializer.is_valid():
+                return Response(
+                    {'error': 'Invalid data'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            serializer.save() 
+            return Response(
+                    serializer.data,
+                    status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+
+class CheckPasswordView(APIView):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+
+    def post(self,request):
+        try:
+
+            user = User.objects.get(username=request.user)
+            if not user:
+                return Response(
+                    {'error': '401 UNAUTHORIZED'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            password_matched = user.check_password(request.data['password'])
+            if not password_matched:
+                return Response(
+                        {'error':'Invalid Password...'},
+                        status=status.HTTP_401_UNAUTHORIZED
+                )
+            else:
+                return Response(
+                        {'message':'Password Matched'},
+                        status=status.HTTP_200_OK
+                )
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+    def patch(self,request):
+        try:
+
+            user = User.objects.get(username=request.user)
+            if not user:
+                return Response(
+                    {'error': '401 UNAUTHORIZED'},
+                    status=status.HTTP_401_UNAUTHORIZED
+                )
+            print(request.data)
+            user.set_password(request.data['password'])
+            user.save()
+            return Response(
+                    {'message':'Password Saved...'},
+                    status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     
 @api_view(('GET',))
 def Logout(request):

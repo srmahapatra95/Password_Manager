@@ -95,12 +95,12 @@ function NavBar() {
   return (
     <>
 
-    <div className='bg-gray-900 p-4 flex flex-row justify-between items-center'>
+    <div className='shadow-lg dark:shadow-none p-4 flex flex-row justify-between items-center'>
         <div className='w-3/10 p-2 flex justify-center items-center'>
-            <h3 className='font-mono text-slate-300 text-xl font-bold'>Password Manager</h3>
+            <h3 className='font-mono text-gray-900 dark:text-gray-100 text-xl font-bold'>Password Manager</h3>
         </div>
         <div className='relative cursor-pointer flex flex-row'>
-            <button onClick={handleToggleDropDown} type="button" class="text-white font-bold hover:bg-slate-800 p-2 flex justify-center items-center rounded-full cursor-pointer">
+            <button onClick={handleToggleDropDown} type="button" class="text-gray-900 dark:text-gray-100 font-bold hover:bg-slate-200 dark:hover:bg-slate-800 p-2 flex justify-center items-center rounded-full cursor-pointer">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
                 <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
               </svg>

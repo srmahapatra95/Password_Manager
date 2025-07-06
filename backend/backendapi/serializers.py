@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 from cryptography.fernet import Fernet
 
-from.models import UserData
+from.models import *
 
 class UserCreationSerializers(serializers.ModelSerializer):
     class Meta:
@@ -37,6 +38,8 @@ class ProfilePasswordUpdateSerializer(serializers.ModelSerializer):
     
 class UserNameAvailableSerializers(serializers.Serializer):
     username = serializers.CharField(required=True)
+
+
     
 class UserLoginSerializers(serializers.Serializer):
     # IMPORTANT: Using Model Serializer here will result in error
@@ -64,6 +67,24 @@ class UserDataListSerializers(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation['password'] = '*'*len(instance.password)
         return representation
+    
+class UserSettingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserSettings
+        fields = '__all__'
+        extra_kwargs = {'lock_screen_password':{'write_only':True}}
+
+    def update(self, instance, validated_data):
+            if (len(validated_data.items()) > 0):
+                if 'lock_screen_password' in validated_data:
+                    pin = validated_data.pop('lock_screen_password')
+                    instance.lock_screen_password = make_password(pin)
+                for attr, value in validated_data.items():
+                    print("This is from settings update : ",attr, value)
+                    setattr(instance, attr, value)
+            instance.save() 
+            return instance
+        
 
 class ShowPasswordSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=True)

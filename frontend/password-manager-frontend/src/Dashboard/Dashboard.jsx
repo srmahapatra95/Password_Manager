@@ -7,16 +7,16 @@ import Tab from './components/Tab'
 import Screen from './components/Screen'
 import { GlobalContext } from '../../store'
 const LazyDataList = lazy(() => import('./components/DataList'))
+import { get_user_settings } from '../../store/actions/actions'
 
 
 function Dashboard() {
     const {screenState, screenDispatch} = useContext(GlobalContext)
     const {authState, authDispatch} = useContext(GlobalContext)
 
-
   return (
     <>
-    <div className='flex flex-col w-screen h-screen bg-gray-900'>
+    <div className='flex flex-col w-screen h-screen bg-slate-200 dark:bg-gray-900'>
       <div id='NavBar' className='w-full h-1/10 flex flex-col justify-center'>
         <NavBar/>
       </div>

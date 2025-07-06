@@ -1,3 +1,5 @@
+import { data } from "react-router"
+
 const API_URL = 'http://localhost:8001'
 
 
@@ -299,3 +301,172 @@ export const bulk_delete = (toast, updateUiAfterDelete) => async (data_obj) => {
     })
 }
 
+export const change_account_password = (toast) => async (data_obj, methodType, setStateFunc1 = null, closeScreenFunc =null) => {
+    const URL = `${API_URL}/api/check-password/`
+    const response  = await fetch(URL,{
+      method: methodType,
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Token ${localStorage.getItem('token')}`, 
+      },
+      body: JSON.stringify(data_obj)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.message){
+        toast.success(data.message)
+        if(methodType === 'POST'){
+          setStateFunc1(true)
+        }
+        else{
+          setStateFunc1(false)
+          closeScreenFunc(false)
+        }
+      }
+      else{
+        toast.error(data.error)
+      }
+    })
+    .catch(error => {
+      console.log("The error is : ", error)
+    })
+}
+
+export const get_user_settings = (dispatch) => async () => {
+  const URL = `${API_URL}/api/get-user-settings/`
+    const response  = await fetch(URL,{
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Token ${localStorage.getItem('token')}`, 
+      },
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("The user setting is : ",data)
+      if(data){
+        if(data.lock_screen){
+          dispatch({type:'LOCKSCREEN_ON', payload: data.lock_screen})
+        }
+        else{
+          dispatch({type:'LOCKSCREEN_OFF', payload: data.lock_screen})
+        }
+        if(data.theme === 'Dark'){
+          localStorage.setItem('theme','dark')
+          document.body.setAttribute("data-theme", "dark");
+        }else{
+          localStorage.setItem('theme','light')
+          document.body.setAttribute("data-theme", "light");
+        }
+      }
+    })
+    .catch(error => {
+      console.log("The error is : ", error)
+    })
+}
+
+export const set_lock_screen = (dispatch, type, payload) => async (data_obj) => {
+  const URL = `${API_URL}/api/set-user-settings/`
+    const response  = await fetch(URL,{
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Token ${localStorage.getItem('token')}`, 
+      },
+      body: JSON.stringify(data_obj)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      if(data){
+        if(data.lock_screen){
+              dispatch({type: 'LOCKSCREEN_ON', payload: true})
+
+        }else{
+              dispatch({type: 'LOCKSCREEN_OFF', payload: false})
+          }
+
+      }
+    })
+    .catch(error => {
+      console.log("The error is : ", error)
+    })
+}
+
+
+export const set_theme = () => async (data_obj) => {
+  const URL = `${API_URL}/api/set-user-settings/`
+    const response  = await fetch(URL,{
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Token ${localStorage.getItem('token')}`, 
+      },
+      body: JSON.stringify(data_obj)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      if(data){
+        if(data.theme === 'Dark'){
+          localStorage.setItem('theme','dark')
+          document.body.setAttribute("data-theme", "dark");
+        }else{
+          localStorage.setItem('theme','light')
+          document.body.setAttribute("data-theme", "light");
+        }   
+
+      }
+    })
+    .catch(error => {
+      console.log("The error is : ", error)
+    })
+}
+
+export const set_lock_screen_PIN = (toast) => async (data_obj) => {
+  const URL = `${API_URL}/api/set-user-settings/`
+    const response  = await fetch(URL,{
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Token ${localStorage.getItem('token')}`, 
+      },
+      body: JSON.stringify(data_obj)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data){
+          toast.success('PIN Set Successfully...')
+      }
+      else{
+          toast.error(data.error)
+      }
+    })
+    .catch(error => {
+      console.log("The error is : ", error)
+    })
+}
+
+export const discard_lock_screen_PIN = (toast) => async (data_obj) => {
+  const URL = `${API_URL}/api/set-user-settings/`
+    const response  = await fetch(URL,{
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Token ${localStorage.getItem('token')}`, 
+      },
+      body: JSON.stringify(data_obj)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data){
+          toast.success('PIN Discarded Successfully...')
+      }
+      else{
+          toast.error(data.error)
+      }
+    })
+    .catch(error => {
+      console.log("The error is : ", error)
+    })
+}

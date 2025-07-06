@@ -1,5 +1,5 @@
 import React,{ createContext, useReducer , useState} from "react";
-import {authReducer, registerReducer, screenReducer, tabReducer, listViewReducer, deleteItemsReducer} from './reducers/reducers'
+import {authReducer, registerReducer, screenReducer, tabReducer, listViewReducer, deleteItemsReducer, lockScreenStateReducer} from './reducers/reducers'
 
 const initialAuthState = {
     id: null,
@@ -7,6 +7,12 @@ const initialAuthState = {
     loading:false,
     error: null,
 }
+
+const initialLockScreenState = {
+    lock_unlock: false,
+    lockScreen_On_Off: false
+}
+
 const initialregisterState = {
     loading: false,
     success: false,
@@ -45,6 +51,7 @@ const GlobalProvider = ({children}) => {
     const [tabState, tabDispatch] = useReducer(tabReducer,initialTabState)
     const [listViewState, listViewDispatch] = useReducer(listViewReducer,initialListViewState)
     const [deleteItemsState, deleteItemsDispatch] = useReducer(deleteItemsReducer,initialDeleteItemsState)
+    const [lockScreenState, lockScreenDispatch] = useReducer(lockScreenStateReducer,initialLockScreenState)
 
 
     const [id, setId] = useState(-1)
@@ -69,6 +76,8 @@ const GlobalProvider = ({children}) => {
         listViewDispatch:listViewDispatch,
         deleteItemsState:deleteItemsState,
         deleteItemsDispatch: deleteItemsDispatch,
+        lockScreenState:lockScreenState, 
+        lockScreenDispatch:lockScreenDispatch,
 
         id:id,
         setId:setId,
