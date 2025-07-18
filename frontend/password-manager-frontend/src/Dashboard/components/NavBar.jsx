@@ -2,14 +2,15 @@ import {React ,useRef,useState, useEffect,useContext} from 'react'
 import { GlobalContext } from '../../../store';
 import { logout } from '../../../store/actions/actions';
 import { useNavigate } from 'react-router-dom';
+import { lock_unlock } from '../../../store/actions/actions';
 
-function NavBar() {
+function NavBar({lock, setLock}) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const handleToggleDropDown = () => {
       setIsOpen(!isOpen)
   }
-
+  const {lockScreenState, lockScreenDispatch} = useContext(GlobalContext)
 
   function DropDown(){
     const ref = useRef(null);
@@ -17,6 +18,7 @@ function NavBar() {
     const {authState, authDispatch} = useContext(GlobalContext)
     const {tabState, tabDispatch} = useContext(GlobalContext)
     const {listViewState, listViewDispatch} = useContext(GlobalContext)
+
         useEffect(() => {
       function handleClickOutside(event) {
         if (ref.current && !ref.current.contains(event.target)) {
@@ -35,6 +37,8 @@ function NavBar() {
       setIsOpen(false); // Close the dropdown if click
       screenDispatch({type:'SHOW_SCREEN', payload: 'add-data'})
     }
+
+
 
     function navigateToSettings(){
       navigate('/settings')
@@ -56,6 +60,8 @@ function NavBar() {
       localStorage.clear()
       window.location.reload()
     }
+
+
     return(<>
           <div ref={ref} id="dropdown" class="z-10 absolute right-0.5 my-1 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
               <ul class="p-2 w-full flex flex-col items-start text-sm text-gray-700 dark:text-gray-200 cursor-pointer">
@@ -92,6 +98,15 @@ function NavBar() {
     </>)
   }
 
+  function handleSetLock(){
+    const setLockAction = lock_unlock()
+    const data = {
+      lock_screen_status: !lock
+    }
+    setLockAction(data)
+    setLock({type: 'LOCK'})
+  }
+
   return (
     <>
 
@@ -99,14 +114,33 @@ function NavBar() {
         <div className='w-3/10 p-2 flex justify-center items-center'>
             <h3 className='font-mono text-gray-900 dark:text-gray-100 text-xl font-bold'>Password Manager</h3>
         </div>
-        <div className='relative cursor-pointer flex flex-row'>
-            <button onClick={handleToggleDropDown} type="button" class="text-gray-900 dark:text-gray-100 font-bold hover:bg-slate-200 dark:hover:bg-slate-800 p-2 flex justify-center items-center rounded-full cursor-pointer">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
-                <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
-              </svg>
-            </button>
-            {isOpen ? (<><DropDown/></>):(<></>)}
+        <div className='flex flex-row items-between justify-center p-2'>
+          <div className=' flex flex-row items-center justify-center mr-3'>
+            {lockScreenState.lockScreen_On_Off ? (<>
+                <div onClick={handleSetLock} className='text-gray-900 dark:text-gray-100 font-bold hover:bg-slate-200 dark:hover:bg-slate-800 p-2 flex justify-center items-center rounded-full cursor-pointer'>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="text-gray-900 dark:text-gray-100 font-bold cursor-pointer" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M8 0a4 4 0 0 1 4 4v2.05a2.5 2.5 0 0 1 2 2.45v5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5v-5a2.5 2.5 0 0 1 2-2.45V4a4 4 0 0 1 4-4M4.5 7A1.5 1.5 0 0 0 3 8.5v5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 11.5 7zM8 1a3 3 0 0 0-3 3v2h6V4a3 3 0 0 0-3-3"/>
+                  </svg>
+                </div>
+            </>):(<>
+                <div>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="text-gray-500 dark:text-gray-400 font-bold" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M8 0a4 4 0 0 1 4 4v2.05a2.5 2.5 0 0 1 2 2.45v5a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 2 13.5v-5a2.5 2.5 0 0 1 2-2.45V4a4 4 0 0 1 4-4M4.5 7A1.5 1.5 0 0 0 3 8.5v5A1.5 1.5 0 0 0 4.5 15h7a1.5 1.5 0 0 0 1.5-1.5v-5A1.5 1.5 0 0 0 11.5 7zM8 1a3 3 0 0 0-3 3v2h6V4a3 3 0 0 0-3-3"/>
+                  </svg>
+                </div>
+            </>)}
+
+          </div>
+          <div className='relative cursor-pointer flex flex-row'>
+              <button onClick={handleToggleDropDown} type="button" class="text-gray-900 dark:text-gray-100 font-bold hover:bg-slate-200 dark:hover:bg-slate-800 p-2 flex justify-center items-center rounded-full cursor-pointer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots" viewBox="0 0 16 16">
+                  <path d="M3 9.5a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3"/>
+                </svg>
+              </button>
+              {isOpen ? (<><DropDown/></>):(<></>)}
+          </div>
         </div>
+
     </div>
 
     </>

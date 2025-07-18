@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate,logout,login
 from django.views.decorators.http import require_safe
 from django.views.decorators.cache import never_cache
 from django.middleware.csrf import get_token
+from django.contrib.auth.hashers import check_password, make_password
 
 
 
@@ -167,6 +168,30 @@ class GetUserSettingsView(APIView):
                 {'error': f'Server Error: {str(e)}'},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+class CheckPINView(APIView):
+    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request):
+        try:
+            user = User.objects.get(username=request.user)
+            user_settings = UserSettings.objects.get(user=user)
+
+            if(check_password(request.data['lock_screen_password'], user_settings.lock_screen_password)):
+                return Response(
+                    {'msg': 'Valid'},
+                    status=status.HTTP_200_OK
+            )
+            return Response(
+                    {'error': 'Invalid'},
+                    status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Server Error: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class SetUserSettingsView(APIView):
     authentication_classes = [TokenAuthentication,SessionAuthentication]
@@ -176,7 +201,6 @@ class SetUserSettingsView(APIView):
         try:
             user = User.objects.get(username=request.user)
             user_settings = UserSettings.objects.get(user=user)
-            print(request.data)
             serializer = UserSettingSerializer(user_settings,data=request.data,partial=True)
             if not serializer.is_valid():
                 return Response(

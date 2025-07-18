@@ -8,17 +8,19 @@ import Screen from './components/Screen'
 import { GlobalContext } from '../../store'
 const LazyDataList = lazy(() => import('./components/DataList'))
 import { get_user_settings } from '../../store/actions/actions'
+import DashBoardLockScreen from './components/DashBoardLockScreen'
 
 
 function Dashboard() {
     const {screenState, screenDispatch} = useContext(GlobalContext)
     const {authState, authDispatch} = useContext(GlobalContext)
+    const {lockScreenState, lockScreenDispatch} = useContext(GlobalContext)  
 
   return (
     <>
     <div className='flex flex-col w-screen h-screen bg-slate-200 dark:bg-gray-900'>
       <div id='NavBar' className='w-full h-1/10 flex flex-col justify-center'>
-        <NavBar/>
+        <NavBar lock={lockScreenState.lock} setLock={lockScreenDispatch}/>
       </div>
       <section className='w-100/100 h-9/10 flex flex-row items-center justify-around'>
         <div id='left-panel' className='w-1/4 h-98/100 p-2'>
@@ -32,6 +34,7 @@ function Dashboard() {
         </div>
       </section>
       {screenState.show ?(<Screen/>):(<></>)}
+      {lockScreenState.lock ?(<DashBoardLockScreen lock={lockScreenState.lock} setLock={lockScreenDispatch} />):(<></>)}
     </div>
     </>
   )

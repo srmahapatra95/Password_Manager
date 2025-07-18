@@ -140,13 +140,13 @@ export function deleteItemsReducer(state, action){
 
 export function lockScreenStateReducer(state, action){
     switch(action.type){
-      case "ENABLE_LOCKSCREEN":
+      case "LOCK":
         return{
-          ...state,enableLockScreen: true,
+          ...state,lock: true,
         }
-      case "DISABLE_LOCKSCREEN":
+      case "UNLOCK":
         return{
-          ...state,enableLockScreen: false,
+          ...state,lock: false,
         }
       case 'LOCKSCREEN_ON':
           return{

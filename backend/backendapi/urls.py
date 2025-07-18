@@ -14,6 +14,7 @@ urlpatterns = [
     path('api/check-password/', CheckPasswordView.as_view(), name='check-password'),      
     path('api/get-user-settings/', GetUserSettingsView.as_view(), name='get-user-settings'),  
     path('api/set-user-settings/', SetUserSettingsView.as_view(), name='set-user-settings'),  
+    path('api/check-pin/', CheckPINView.as_view(), name='set-user-settings'),  
     path('api/logout/', Logout, name='logout'),
     path('api/datalist/', UserDataListView.as_view(), name='datalist'),
     path('api/add-data/', AddUserDataView.as_view(), name='add-data'),

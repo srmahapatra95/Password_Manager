@@ -39,5 +39,6 @@ class UserSettings(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     theme = models.CharField(choices=THEME_CHOICES, default='Dark')
     lock_screen = models.BooleanField(default=False)
-    lock_screen_password = models.CharField(max_length=6)
+    lock_screen_password = models.CharField()
+    lock_screen_status = models.BooleanField(default=False)
 

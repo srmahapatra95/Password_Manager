@@ -9,7 +9,7 @@ const initialAuthState = {
 }
 
 const initialLockScreenState = {
-    lock_unlock: false,
+    lock: false,
     lockScreen_On_Off: false
 }
 

@@ -351,6 +351,11 @@ export const get_user_settings = (dispatch) => async () => {
         else{
           dispatch({type:'LOCKSCREEN_OFF', payload: data.lock_screen})
         }
+        if(data.lock_screen_status){
+          dispatch({type:'LOCK', payload: data.lock_screen_status})
+        }else{
+          dispatch({type:'UNLOCK', payload: data.lock_screen_status})
+        }
         if(data.theme === 'Dark'){
           localStorage.setItem('theme','dark')
           document.body.setAttribute("data-theme", "dark");
@@ -470,3 +475,52 @@ export const discard_lock_screen_PIN = (toast) => async (data_obj) => {
       console.log("The error is : ", error)
     })
 }
+
+export const lock_unlock = () => async (data_obj) => {
+  const URL = `${API_URL}/api/set-user-settings/`
+    const response  = await fetch(URL,{
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Token ${localStorage.getItem('token')}`, 
+      },
+      body: JSON.stringify(data_obj)
+    })
+    .then(response => response.json())
+    .then(data => {
+    })
+    .catch(error => {
+      console.log("The error is : ", error)
+    })
+}
+
+
+
+export const check_lock_screen_PIN = (setErrorMsg, errorMsg, setPin, lock, setLock, func_lock_unlock) => async (data_obj) => {
+  const URL = `${API_URL}/api/check-pin/`
+    const response  = await fetch(URL,{
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Token ${localStorage.getItem('token')}`, 
+      },
+      body: JSON.stringify(data_obj)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if(data.msg === 'Valid'){
+          setLock({type:'UNLOCK'})
+          setErrorMsg({...errorMsg, show: false, msg: ""})
+          setPin('')
+          func_lock_unlock()
+      }
+      if(data.error === 'Invalid'){
+            setErrorMsg({...errorMsg, show: true, msg: "Invalid PIN. Try Again..."})
+            setPin('')
+      }
+    })
+    .catch(error => {
+      console.log("The error is : ", error)
+    })
+}
+
