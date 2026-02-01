@@ -42,9 +42,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <GlobalProvider>
       <ToastContextProvider>
-    <RouterProvider router={router}>
-    <App />
-    </RouterProvider>
+    <RouterProvider router={router} />
     </ToastContextProvider>
     </GlobalProvider>
   </StrictMode>,

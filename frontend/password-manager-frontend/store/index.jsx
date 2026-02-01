@@ -9,8 +9,10 @@ const initialAuthState = {
 }
 
 const initialLockScreenState = {
-    lock: false,
-    lockScreen_On_Off: false
+    lock: true,
+    lockScreen_On_Off: false,
+    hasPin: false,
+    settingsLoaded: false
 }
 
 const initialregisterState = {

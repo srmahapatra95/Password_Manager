@@ -1,7 +1,4 @@
-from django.contrib import admin
-from django.urls import path, include, re_path
-from django.views.generic.base import TemplateView
-
+from django.urls import path
 
 from .views import *
 
@@ -11,17 +8,14 @@ urlpatterns = [
     path('api/update-password-data/', UpdatePasswordDataView.as_view(), name='update-password-data'),
     path('api/login/', LoginView.as_view(), name='login'),
     path('api/is-authenticated-user/', IsAuthenticatedUserView.as_view(), name='is-authenticated-user'),
-    path('api/check-password/', CheckPasswordView.as_view(), name='check-password'),      
-    path('api/get-user-settings/', GetUserSettingsView.as_view(), name='get-user-settings'),  
-    path('api/set-user-settings/', SetUserSettingsView.as_view(), name='set-user-settings'),  
-    path('api/check-pin/', CheckPINView.as_view(), name='set-user-settings'),  
+    path('api/check-password/', CheckPasswordView.as_view(), name='check-password'),
+    path('api/get-user-settings/', GetUserSettingsView.as_view(), name='get-user-settings'),
+    path('api/set-user-settings/', SetUserSettingsView.as_view(), name='set-user-settings'),
+    path('api/check-pin/', CheckPINView.as_view(), name='check-pin'),
     path('api/logout/', Logout, name='logout'),
     path('api/datalist/', UserDataListView.as_view(), name='datalist'),
     path('api/add-data/', AddUserDataView.as_view(), name='add-data'),
     path('api/data-detail/<int:pk>/', UserDataDetailView.as_view(), name='data-detail'),
-    path('api/bulk-delete/', BulkDeleteView.as_view(), name='data-detail'),
+    path('api/bulk-delete/', BulkDeleteView.as_view(), name='bulk-delete'),
     path('api/show-password/',ShowPasswordView.as_view(),name='show-password'),
-    path('api/get-csrf/', get_csrf, name='get-csrf'),
-    re_path(r'^.*', TemplateView.as_view(template_name="index.html"), name='index'),
-
 ]

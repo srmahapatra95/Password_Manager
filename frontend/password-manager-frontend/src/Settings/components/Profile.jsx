@@ -1,6 +1,7 @@
 import {React ,useState } from 'react'
 import { useToast } from '../../../hooks/useToast';
 import { change_account_password } from '../../../store/actions/actions';
+import { User, Lock, XCircle, KeyRound } from 'lucide-react'
 
 function Profile({username}) {
     const [profileScreen, setProfileScreen] = useState(false)
@@ -17,7 +18,7 @@ function ProfileScreen({
 
 
     function handleChangeAccountPassword(){
-        
+
         if(accountPassword === accountPassword2){
             const data = {
                 password: accountPassword
@@ -42,36 +43,34 @@ function ProfileScreen({
     }
 
     const accountPasswordFragment = (<>
-
-
-            <div className="w-full h-95/100 flex flex-col items-center justify-center ">
-                <label className="text-white font-mono font-bold text-3xl my-2" >Enter the Account Password</label>
-                <input value={verifyPassword} onChange={(e) => setVerifyPassword(e.target.value)} className="text-white border-2 border-slate-300 w-8/10 h-10 indent-2 my-2 rounded-md" type="password"/>
-                <button onClick={handleCheckAccountPassword} className="text-white font-bold border-2 border-slate-300 w-8/10 h-10 cursor-pointer my-2 hover:text-black  hover:bg-slate-300 rounded-md">Submit</button>
-            </div>  
-
+            <div className="w-full h-9/10 flex flex-col items-center justify-center px-8">
+                <div className='w-16 h-16 rounded-full bg-indigo-500/20 flex items-center justify-center mb-6'>
+                    <Lock className='w-8 h-8 text-indigo-400' />
+                </div>
+                <label className="text-white font-semibold text-2xl mb-6">Enter Account Password</label>
+                <input value={verifyPassword} onChange={(e) => setVerifyPassword(e.target.value)} className="text-white bg-white/10 border border-white/20 w-8/10 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400 transition-all" type="password" placeholder="Current password..."/>
+                <button onClick={handleCheckAccountPassword} className="mt-4 text-white font-semibold bg-indigo-600 hover:bg-indigo-500 w-8/10 py-3 cursor-pointer rounded-xl transition-all shadow-lg shadow-indigo-500/20">Submit</button>
+            </div>
     </>)
 
     const changeAccountPasswordFragment = (<>
-
-
-            <div className="w-full h-95/100 flex flex-col items-center justify-center ">
-                <label className="text-white font-mono font-bold text-3xl my-2" >Enter Password</label>
-                <input value={accountPassword} onChange={(e) => setAccountPassword(e.target.value)} className="text-white border-2 border-slate-300 w-8/10 h-10 indent-2 my-2 rounded-md" type="password"/>
-                <label className="text-white font-mono font-bold text-3xl my-2" >Enter Password2</label>
-                <input value={accountPassword2} onChange={(e) => setAccountPassword2(e.target.value)} className="text-white border-2 border-slate-300 w-8/10 h-10 indent-2 my-2 rounded-md" type="password"/>
-                <button onClick={handleChangeAccountPassword} className="text-white font-bold border-2 border-slate-300 w-8/10 h-10 cursor-pointer my-2 hover:text-black  hover:bg-slate-300 rounded-md">Submit</button>
-            </div>  
+            <div className="w-full h-9/10 flex flex-col items-center justify-center px-8">
+                <div className='w-16 h-16 rounded-full bg-indigo-500/20 flex items-center justify-center mb-6'>
+                    <KeyRound className='w-8 h-8 text-indigo-400' />
+                </div>
+                <label className="text-white font-semibold text-xl mb-2">New Password</label>
+                <input value={accountPassword} onChange={(e) => setAccountPassword(e.target.value)} className="text-white bg-white/10 border border-white/20 w-8/10 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400 transition-all mb-4" type="password" placeholder="New password..."/>
+                <label className="text-white font-semibold text-xl mb-2">Confirm Password</label>
+                <input value={accountPassword2} onChange={(e) => setAccountPassword2(e.target.value)} className="text-white bg-white/10 border border-white/20 w-8/10 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400 transition-all mb-4" type="password" placeholder="Confirm password..."/>
+                <button onClick={handleChangeAccountPassword} className="mt-2 text-white font-semibold bg-indigo-600 hover:bg-indigo-500 w-8/10 py-3 cursor-pointer rounded-xl transition-all shadow-lg shadow-indigo-500/20">Change Password</button>
+            </div>
     </>)
-    
+
     return(<>
-             <div className="z-50 text-white absolute top-0 left-0 w-full h-full opaque">
-            <div className="w-full p-2 flex flex-row justify-end">
-                <button onClick={()=>setProfileScreen(!profileScreen)} className="text-black dark:text-white hover:bg-rose-800 hover:text-white dark:hover:text-black rounded-full cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-                </svg>
+             <div className="z-50 text-white absolute top-0 left-0 w-full h-full opaque rounded-xl">
+            <div className="w-full p-3 flex flex-row justify-end">
+                <button onClick={()=>setProfileScreen(!profileScreen)} className="text-gray-300 hover:text-rose-400 transition-colors cursor-pointer">
+                    <XCircle className='w-5 h-5' />
                 </button>
             </div>
             {checkedAccountPassword?changeAccountPasswordFragment:accountPasswordFragment}
@@ -80,25 +79,37 @@ function ProfileScreen({
     </>)
 }
 
+    const cardClass = "flex items-center gap-3 px-4 py-4 rounded-xl bg-stone-50 dark:bg-gray-700/40 border border-stone-200 dark:border-gray-600 transition-all"
+
   return (
     <>
-    <div className='w-full h-full p-3 flex flex-col justify-start items-start relative'>
-        <div className='w-full flex flex-col items-start justify-start p-2'>
-            <label className='text-slate-900 dark:text-slate-100 font-bold font-mono text-2xl'>Profile</label>
-            <hr className=" w-full my-2 h-1 text-slate-400 rounded-sm dark:bg-gray-700"/>
+    <div className='w-full h-full p-6 flex flex-col justify-start items-start relative'>
+        <div className='w-full flex flex-col items-start justify-start mb-6'>
+            <div className='flex items-center gap-3'>
+                <div className='w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center'>
+                    <User className='w-4 h-4 text-indigo-500' />
+                </div>
+                <label className='text-gray-900 dark:text-gray-100 font-semibold text-xl'>Profile</label>
+            </div>
+            <div className='w-full h-px bg-gray-200 dark:bg-gray-800 mt-4'></div>
         </div>
-        <div className='w-7/10 flex flex-col items-start p-2'>
-            <label className='text-slate-900 dark:text-slate-100 font-bold font-mono text-sm'>Username</label>
-            <input disabled type="text" placeholder={username} className="mt-2 p-1 indent-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
-        </div>
-        <div className='w-7/10 flex flex-row items-center justify-between p-2'>
-            <label className='text-slate-900 dark:text-slate-100 font-bold font-mono text-sm'>Password</label>
-        </div>
-        <div className='w-7/10 flex flex-col items-start p-2'>
-            <div className='w-full flex flex-row items-center relative '>
-                <button onClick={()=>setProfileScreen(!profileScreen)} className="mr-1 mt-2 p-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md  block w-full dark:bg-gray-700 dark:border-gray-600  dark:text-white cursor-pointer" >
-                    Change Password              
-                </button>
+        <div className='w-8/10 flex flex-col gap-4'>
+            <div className={cardClass}>
+                <User className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                <div className="flex-1">
+                    <label className='block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1'>Username</label>
+                    <input disabled type="text" placeholder={username} className="bg-transparent border-0 text-gray-900 text-base focus:ring-0 focus:outline-none block w-full dark:text-white placeholder-gray-400"/>
+                </div>
+            </div>
+            <div className={cardClass}>
+                <Lock className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                <div className="flex-1">
+                    <label className='block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1'>Password</label>
+                    <button onClick={()=>setProfileScreen(!profileScreen)} className="flex items-center gap-2 px-4 py-2 bg-stone-50 dark:bg-gray-800 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-sm font-medium rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 cursor-pointer transition-all">
+                        <KeyRound className='w-3.5 h-3.5' />
+                        Change Password
+                    </button>
+                </div>
             </div>
         </div>
         {profileScreen?(<ProfileScreen profileScreen={profileScreen} setProfileScreen={setProfileScreen}/>):(<></>)}

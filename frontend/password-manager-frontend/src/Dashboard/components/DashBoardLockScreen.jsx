@@ -1,19 +1,26 @@
 import React, { useContext, useEffect, useState} from "react"
 import { GlobalContext } from "../../../store";
-import AddData from "./AddData";
-import DeleteData from "./DeleteData";
 import { useToast } from "../../../hooks/useToast";
-import ProfileCard from "./ProfileCard";
 import { check_lock_screen_PIN, lock_unlock } from "../../../store/actions/actions";
+import { Lock, AlertCircle } from 'lucide-react'
+
 function DashBoardLockScreen({lock, setLock}){
     const [pin, setPin] = useState('')
-    const [pinChecked, setPinChecked] = useState(false)
     const [errorMsg, setErrorMsg] = useState({
         show: false,
         msg: ''
     })
-    const {authState, authDispatch} = useContext(GlobalContext)
+    const {authState} = useContext(GlobalContext)
     const toast = useToast()
+
+    useEffect(() => {
+        const blockBack = () => {
+            window.history.pushState(null, '', window.location.href)
+        }
+        window.history.pushState(null, '', window.location.href)
+        window.addEventListener('popstate', blockBack)
+        return () => window.removeEventListener('popstate', blockBack)
+    }, [])
     function func_lock_unlock(){
                 const setLockAction = lock_unlock()
                 const data = {
@@ -36,27 +43,32 @@ function DashBoardLockScreen({lock, setLock}){
         }
     }
     return (
-        <div className="absolute top-0 left-0 bg-gray-200 dark:bg-gray-900 w-screen h-screen flex flex-col">
-            <div className="w-full bg-gray-200 dark:bg-gray-900 h-98/100 flex flex-col justify-center items-center">
-                <div className="h-2/10 w-2/10 bg-gray-300 dark:bg-slate-800 p-3 sm:flex flex-col justify-center items-center rounded-lg">
-                    <div className="w-15 h-15 m-2 flex items-center justify-center bg-slate-400 dark:bg-gray-500 rounded-full">
-                        <p className='text-gray-900 dark:text-slate-300 text-2xl font-bold text-mono'>{authState.username?.slice(0,1).toUpperCase()}</p>
+        <div className="absolute top-0 left-0 bg-gradient-to-br from-gray-100 via-gray-200 to-gray-100 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 w-screen h-screen flex flex-col">
+            <div className="w-full h-full flex flex-col justify-center items-center">
+                <div className="flex flex-col items-center p-8 bg-stone-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-xl">
+                    <div className="w-20 h-20 mb-4 flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full shadow-lg shadow-indigo-500/20">
+                        <p className='text-white text-3xl font-bold'>{authState.username?.slice(0,1).toUpperCase()}</p>
                     </div>
-                    <div className="hidden sm:block m-2 flex flex-col items-center justify-center font-medium">
-                        <p className='text-slate-900 dark:text-slate-300 text-2xl text-center'>{authState.username}</p>
+                    <p className='text-gray-900 dark:text-gray-100 text-xl font-semibold mb-6'>{authState.username}</p>
+
+                    {errorMsg.show?(<>
+                        <div className="flex flex-col items-center gap-3 p-4">
+                            <div className='flex items-center gap-2 text-rose-500'>
+                                <AlertCircle className='w-5 h-5' />
+                                <p className="font-medium text-sm">{errorMsg.msg}</p>
+                            </div>
+                            <button onClick={() => setErrorMsg({...errorMsg, show:false, msg: ''})} className="px-6 py-2 cursor-pointer text-white bg-gray-700 hover:bg-gray-600 font-medium rounded-xl text-sm transition-all">OK</button>
+                        </div>
+                    </>):(<>
+                    <div className="flex flex-col items-center gap-3">
+                        <div className='flex items-center gap-2 text-gray-400 mb-1'>
+                            <Lock className='w-4 h-4' />
+                            <span className='text-sm'>Enter 6-digit PIN</span>
+                        </div>
+                        <input placeholder="------" type="password" value={pin} onChange={(e)=>handlePINChange(e)} className="text-center text-2xl tracking-[0.5em] w-56 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent p-3 transition-all" maxLength={6} required />
                     </div>
+                    </>)}
                 </div>
-                {errorMsg.show?(<>
-                    <div className="p-2 flex flex-col items-center justify-center">
-                        <p className="text-gray-900 dark:text-slate-200 font-bold text-sm">{errorMsg.msg}</p>
-                        <button onClick={() => setErrorMsg({...errorMsg, show:false, msg: ''})} className="my-3 p-2 px-2 cursor-pointer text-white bg-gray-700 hover:bg-gray-600 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">OK</button>
-                    </div>
-                </>):(<>
-                <div class="mb-3 flex flex-row items-center justify-center p-2">
-                    <input placeholder="PIN" type="password" value={pin} onChange={(e)=>handlePINChange(e)} id="pin" class="mx-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
-                </div>
-                </>)}
- 
             </div>
         </div>
     );

@@ -2,13 +2,17 @@ import React,{useContext, useEffect,useRef, useState} from "react";
 import { GlobalContext } from "../../../store";
 import {is_authenticated, decrypt_password } from "../../../store/actions/actions";
 import { useToast } from "../../../hooks/useToast";
+import { XCircle, KeyRound, Lock } from 'lucide-react'
+import KeyModal from './KeyModal'
+
 function TabContentScreen({chooseTabContentScreen, setChooseTabContentScreen}){
 
     const {screenState, screenDispatch} = useContext(GlobalContext)
-    const {id, setId} = useContext(GlobalContext)    
+    const {id, setId} = useContext(GlobalContext)
 
     const [decryptToken, setDecryptToken] = useState('')
     const [accountPassword, setAccountPassword] = useState('')
+    const [modalKey, setModalKey] = useState(null)
 
     const toast = useToast();
 
@@ -21,12 +25,11 @@ function TabContentScreen({chooseTabContentScreen, setChooseTabContentScreen}){
             key: decryptToken
         }
         const token = localStorage.getItem('token')
-        const decryptPasswordAction = decrypt_password(toast)
+        const decryptPasswordAction = decrypt_password(toast, setModalKey)
         decryptPasswordAction(data, token)
-        handleCloseScreen()
     }
     function handleAccountPasswordSubmit(){
-        
+
         const isAuthenticatedAction = is_authenticated(screenDispatch, toast,handleCloseScreen)
         const data = {
             password: accountPassword
@@ -35,32 +38,36 @@ function TabContentScreen({chooseTabContentScreen, setChooseTabContentScreen}){
         setAccountPassword('')
     }
     return (
-        <> 
-        <div className=" text-white absolute top-0 left-0 w-full h-full opaque">
-            <div className="w-full p-2 flex flex-row justify-end">
-                <button onClick={handleCloseScreen} className="text-black dark:text-white hover:bg-rose-800 hover:text-white dark:hover:text-black rounded-full cursor-pointer">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle" viewBox="0 0 16 16">
-                    <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-                </svg>
+        <>
+        <div className="text-white absolute top-0 left-0 w-full h-full opaque rounded-xl">
+            <div className="w-full p-3 flex flex-row justify-end">
+                <button onClick={handleCloseScreen} className="text-gray-300 hover:text-rose-400 transition-colors cursor-pointer">
+                    <XCircle className='w-5 h-5' />
                 </button>
             </div>
             {chooseTabContentScreen == 'show' ? (<>
-            <div className="w-full h-95/100 flex flex-col items-center justify-center">
-                <label className="text-white font-mono font-bold text-3xl my-2" >Enter the Token</label>
-                <input value={decryptToken} onChange={(e)=>setDecryptToken(e.target.value)} className="text-white border-2 border-slate-300 w-8/10 h-10 indent-2 my-2 rounded-md" type="password"/>
-                <button onClick={handleTokenSubmit} className="text-white font-bold border-2 border-slate-300 w-8/10 h-10 cursor-pointer my-2 hover:text-black hover:bg-slate-300 rounded-md">Submit</button>
+            <div className="w-full h-9/10 flex flex-col items-center justify-center px-8">
+                <div className='w-16 h-16 rounded-full bg-indigo-500/20 flex items-center justify-center mb-6'>
+                    <KeyRound className='w-8 h-8 text-indigo-400' />
+                </div>
+                <label className="text-white font-semibold text-2xl mb-6">Enter Decryption Token</label>
+                <input value={decryptToken} onChange={(e)=>setDecryptToken(e.target.value)} className="text-white bg-white/10 border border-white/20 w-8/10 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400 transition-all" type="password" placeholder="Enter token..."/>
+                <button onClick={handleTokenSubmit} className="mt-4 text-white font-semibold bg-indigo-600 hover:bg-indigo-500 w-8/10 py-3 cursor-pointer rounded-xl transition-all shadow-lg shadow-indigo-500/20">Submit</button>
             </div>
             </>):(<>
-            <div className="w-full h-95/100 flex flex-col items-center justify-center ">
-                <label className="text-white font-mono font-bold text-3xl my-2" >Enter the Account Password</label>
-                <input value={accountPassword} onChange={(e) => setAccountPassword(e.target.value)} className="text-white border-2 border-slate-300 w-8/10 h-10 indent-2 my-2 rounded-md" type="password"/>
-                <button onClick={handleAccountPasswordSubmit} className="text-white font-bold border-2 border-slate-300 w-8/10 h-10 cursor-pointer my-2 hover:text-black  hover:bg-slate-300 rounded-md">Submit</button>
-            </div>  
+            <div className="w-full h-9/10 flex flex-col items-center justify-center px-8">
+                <div className='w-16 h-16 rounded-full bg-indigo-500/20 flex items-center justify-center mb-6'>
+                    <Lock className='w-8 h-8 text-indigo-400' />
+                </div>
+                <label className="text-white font-semibold text-2xl mb-6">Enter Account Password</label>
+                <input value={accountPassword} onChange={(e) => setAccountPassword(e.target.value)} className="text-white bg-white/10 border border-white/20 w-8/10 py-3 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent placeholder-gray-400 transition-all" type="password" placeholder="Enter password..."/>
+                <button onClick={handleAccountPasswordSubmit} className="mt-4 text-white font-semibold bg-indigo-600 hover:bg-indigo-500 w-8/10 py-3 cursor-pointer rounded-xl transition-all shadow-lg shadow-indigo-500/20">Submit</button>
+            </div>
             </>)}
 
 
         </div>
+        {modalKey && <KeyModal keyValue={modalKey} onClose={() => { setModalKey(null); handleCloseScreen(); }} />}
         </>
     )
 

@@ -1,6 +1,6 @@
 import { data } from "react-router"
 
-const API_URL = 'http://localhost:8001'
+const API_URL = `${import.meta.env.VITE_API_HOST || 'http://localhost'}:${import.meta.env.VITE_API_PORT || 8001}`
 
 
 export const is_authenticated_user = (dispatch) => async (token) => {
@@ -25,38 +25,32 @@ export const is_authenticated_user = (dispatch) => async (token) => {
 
 
 
-export const login = (dispatch,navigate, toast) => async (credentials, csrftoken) => {
+export const login = (dispatch,navigate, toast) => async (credentials) => {
     dispatch({ type: 'LOGIN_REQUEST' });
 
-    const URL = `${API_URL}/api/login/`
-    fetch(URL,{
-            method: 'POST',
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'X-CSRFToken': csrftoken,
-
-            },
-            body: JSON.stringify(credentials)
-    })
-    .then(resposne => resposne.json())
-    .then(data => {
+    try {
+      const URL = `${API_URL}/api/login/`
+      const response = await fetch(URL,{
+              method: 'POST',
+              headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(credentials)
+      })
+      const data = await response.json()
       if(!data.token){
-          dispatch({ type: 'LOGIN_FAILURE', payload: error.message});
-          navigate('/')
+          dispatch({ type: 'LOGIN_FAILURE', payload: data.error || 'Login failed'});
       }
       else{
-      toast.success('Login Success...')
-      localStorage.setItem('token', data.token)
-      dispatch({ type: 'LOGIN_SUCCESS'});
-      navigate('/dashboard')
+        localStorage.setItem('token', data.token)
+        dispatch({ type: 'LOGIN_SUCCESS'});
+        toast.success('Login Success...')
+        navigate('/dashboard')
       }
-
-    })
-    .catch((error) => {
+    } catch (error) {
       toast.error('Login Failed...')
-      //console.error(error)
-    })    
+    }
 
 
 
@@ -140,7 +134,7 @@ export const fetchdatalist = (dispatch, toast) => async (token) => {
   }
 };
   
-export const add_data = (dispatch, toast) => async (data_obj,token) => {
+export const add_data = (dispatch, toast, showKey) => async (data_obj,token) => {
   try {
 
     const URL = `${API_URL}/api/add-data/`
@@ -156,7 +150,7 @@ export const add_data = (dispatch, toast) => async (data_obj,token) => {
     let data = await response.json()
     if (data !== null) {
       toast.success('Data Added Successfully...')
-      alert(data.key)
+      if (showKey) showKey(data.key)
       delete data.key
       dispatch({ type: 'ADD_ITEM', payload: data.data});
     } else {
@@ -168,7 +162,7 @@ export const add_data = (dispatch, toast) => async (data_obj,token) => {
   }
 };
 
-export const patch_update_data = (setStateFunc, id, toast) => async (data_obj, token) => {
+export const patch_update_data = (setStateFunc, id, toast, showKey) => async (data_obj, token) => {
   const URL = `${API_URL}/api/data-detail/${id}/`
   fetch(URL,{
             method: 'PATCH',
@@ -186,7 +180,7 @@ export const patch_update_data = (setStateFunc, id, toast) => async (data_obj, t
         setStateFunc[keyval](data[keyval])
       }
     }else{
-      alert(data.key)
+      if (showKey) showKey(data.key)
       for(let [keyval, value] of Object.entries(setStateFunc)){
         setStateFunc[keyval](data.data[keyval])
       }
@@ -219,7 +213,7 @@ export const delete_data = (removeFromView, id, toast) => async (token) => {
 
 }
 
-export const decrypt_password = (toast) => async (data_obj, token) => {
+export const decrypt_password = (toast, showKey) => async (data_obj, token) => {
   const URL = `${API_URL}/api/show-password/`
   fetch(URL,{
             method: 'POST',
@@ -233,7 +227,7 @@ export const decrypt_password = (toast) => async (data_obj, token) => {
   .then(response => response.json())
   .then(data => {
     if(data.key){
-      alert(data.key)
+      if (showKey) showKey(data.key)
     }
     else{
       for(let [key, val] of Object.entries(data)){
@@ -356,6 +350,7 @@ export const get_user_settings = (dispatch) => async () => {
         }else{
           dispatch({type:'UNLOCK', payload: data.lock_screen_status})
         }
+        dispatch({type:'SET_HAS_PIN', payload: !!data.has_pin})
         if(data.theme === 'Dark'){
           localStorage.setItem('theme','dark')
           document.body.setAttribute("data-theme", "dark");

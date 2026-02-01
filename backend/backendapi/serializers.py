@@ -69,10 +69,15 @@ class UserDataListSerializers(serializers.ModelSerializer):
         return representation
     
 class UserSettingSerializer(serializers.ModelSerializer):
+    has_pin = serializers.SerializerMethodField()
+
     class Meta:
         model = UserSettings
         fields = '__all__'
         extra_kwargs = {'lock_screen_password':{'write_only':True}}
+
+    def get_has_pin(self, obj):
+        return bool(obj.lock_screen_password)
 
     def update(self, instance, validated_data):
             if (len(validated_data.items()) > 0):

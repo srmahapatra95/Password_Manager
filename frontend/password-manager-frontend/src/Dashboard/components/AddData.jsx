@@ -2,6 +2,8 @@ import React,{useContext, useEffect,useRef, useState} from "react";
 import { GlobalContext } from "../../../store";
 import { add_data } from "../../../store/actions/actions";
 import { useToast } from '../../../hooks/useToast';
+import { PlusCircle, Tag, User, Mail, Phone, KeyRound, FileText } from 'lucide-react'
+import KeyModal from './KeyModal'
 
 function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
     const {screenState, screenDispatch} = useContext(GlobalContext)
@@ -14,6 +16,7 @@ function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
     const [password, setPassword] = useState('')
     const [password2, setPassword2] = useState('')
     const [info, setInfo] = useState('')
+    const [modalKey, setModalKey] = useState(null)
     const toast = useToast();
 
 
@@ -30,7 +33,7 @@ function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
                         info:info,
                 }
                 const token = localStorage.getItem('token')
-                const addDataAction = add_data(listViewDispatch, toast)
+                const addDataAction = add_data(listViewDispatch, toast, setModalKey)
                 addDataAction(data, token)
             }else{
                 toast.error('Passwords didnot match')
@@ -43,45 +46,89 @@ function AddData({chooseTabContentScreen, setChooseTabContentScreen}){
         setPassword('')
         setPassword2('')
         setInfo('')
-        document.getElementById('close-screen-btn').click();
 
     }
 
+    const inputClass = "bg-transparent border-0 text-gray-900 text-base focus:ring-0 focus:outline-none block w-full py-1.5 dark:text-white placeholder-gray-400"
+    const cardClass = "flex items-center gap-3 px-4 py-3.5 rounded-xl bg-stone-50 dark:bg-gray-700/40 border border-stone-200 dark:border-gray-600 focus-within:ring-2 focus-within:ring-indigo-500 focus-within:border-transparent transition-all"
+    const labelClass = "block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+
     return (
-        <div className="w-6/10 flex flex-col p-3">
+        <div className="w-7/10 flex flex-col p-6 bg-stone-50 dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg max-h-[90vh] overflow-y-auto">
+            <div className='flex items-center gap-3 mb-5'>
+                <div className='w-10 h-10 rounded-xl bg-indigo-500/10 flex items-center justify-center'>
+                    <PlusCircle className='w-5 h-5 text-indigo-500' />
+                </div>
+                <h2 className='text-xl font-semibold text-gray-900 dark:text-gray-100'>Add New Entry</h2>
+            </div>
 
-            <div class="mb-3">
-                <label for="details-for" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Detail For </label>
-                <input value={details_for} onChange={(e)=>setDetails_for(e.target.value)} id="details-for" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-            </div> 
-            <div class="mb-3">
-                <label for="username" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
-                <input value={username} onChange={(e)=>setUsername(e.target.value)} id="username" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-            </div> 
-                <div class="mb-3">
-                <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>
-                <input value={email} onChange={(e)=>setEmail(e.target.value)} id="email" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-            </div> 
-            <div class="mb-3">
-                <label for="mobile" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mobile</label>
-                <input value={mobile} onChange={(e)=>setMobile(e.target.value)} id="mobile" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-            </div> 
-            <div class="mb-3">
-                <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Password</label>
-                <input value={password} onChange={(e)=>setPassword(e.target.value)} id="password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-            </div> 
-            <div class="mb-3">
-                <label for="confirm-password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Confirm Password</label>
-                <input value={password2} onChange={(e)=>setPassword2(e.target.value)} id="confirm-password" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-            </div> 
-            <div class="mb-3">
-                <label for="info" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Info</label>
-                <input value={info} onChange={(e)=>setInfo(e.target.value)} id="info" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="" required />
-            </div> 
+            <div className="flex flex-col gap-3">
+                <div className={cardClass}>
+                    <Tag className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                    <div className="flex-1">
+                        <label className={labelClass}>Details For</label>
+                        <input value={details_for} onChange={(e)=>setDetails_for(e.target.value)} className={inputClass} placeholder="e.g. GitHub, Gmail..." />
+                    </div>
+                </div>
 
-            <button onClick={handleAddDataSubmit} class="cursor-pointer text-white bg-gray-700 hover:bg-gray-600 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center">Submit</button>
+                <div className="grid grid-cols-2 gap-3">
+                    <div className={cardClass}>
+                        <User className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                            <label className={labelClass}>Username</label>
+                            <input value={username} onChange={(e)=>setUsername(e.target.value)} className={inputClass} placeholder="Enter username" />
+                        </div>
+                    </div>
 
+                    <div className={cardClass}>
+                        <Mail className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                            <label className={labelClass}>Email</label>
+                            <input value={email} onChange={(e)=>setEmail(e.target.value)} className={inputClass} placeholder="Enter email" />
+                        </div>
+                    </div>
+                </div>
 
+                <div className={cardClass}>
+                    <Phone className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                    <div className="flex-1">
+                        <label className={labelClass}>Mobile</label>
+                        <input value={mobile} onChange={(e)=>setMobile(e.target.value)} className={inputClass} placeholder="Enter mobile" />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                    <div className={cardClass}>
+                        <KeyRound className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                            <label className={labelClass}>Password</label>
+                            <input value={password} onChange={(e)=>setPassword(e.target.value)} className={inputClass} placeholder="Enter password" type="password" />
+                        </div>
+                    </div>
+
+                    <div className={cardClass}>
+                        <KeyRound className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                            <label className={labelClass}>Confirm Password</label>
+                            <input value={password2} onChange={(e)=>setPassword2(e.target.value)} className={inputClass} placeholder="Confirm password" type="password" />
+                        </div>
+                    </div>
+                </div>
+
+                <div className={cardClass}>
+                    <FileText className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                    <div className="flex-1">
+                        <label className={labelClass}>Info</label>
+                        <textarea value={info} onChange={(e)=>setInfo(e.target.value)} className="bg-transparent border-0 text-gray-900 text-base focus:ring-0 focus:outline-none block w-full py-1.5 dark:text-white placeholder-gray-400 resize-none" rows={2} placeholder="Additional notes..." />
+                    </div>
+                </div>
+            </div>
+
+            <button onClick={handleAddDataSubmit} className="mt-5 cursor-pointer flex items-center justify-center gap-2 text-white bg-indigo-600 hover:bg-indigo-500 font-medium rounded-xl text-sm w-full py-3 transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40">
+                <PlusCircle className='w-4 h-4' />
+                Add Entry
+            </button>
+            {modalKey && <KeyModal keyValue={modalKey} onClose={() => { setModalKey(null); document.getElementById('close-screen-btn').click(); }} />}
         </div>
     )
 }

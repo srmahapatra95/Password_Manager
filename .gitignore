@@ -1,5 +1,13 @@
 databases/
 djangoenv/
+venv/
+env/
+.venv/
+.env/
+
+# Database files
+*.sqlite3
+*.db
 __pycache__/
 migrations/
 static/

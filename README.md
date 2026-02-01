@@ -1,6 +1,6 @@
 # Password Manager
 
-A Personal Password Manager Application  
+A full-stack personal password management application built with Django REST Framework and React.
 [GitHub Repository](https://github.com/srmahapatra95/Password_Manager)
 
 ## Table of Contents
@@ -9,106 +9,159 @@ A Personal Password Manager Application
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Installation](#installation)
+- [API Endpoints](#api-endpoints)
 - [Usage](#usage)
 - [Packages & Libraries](#packages--libraries)
 - [Contributing](#contributing)
-- [License](#license)
 
 ## Overview
 
-Password Manager is a secure, personal password management application designed to help you store and organize your passwords efficiently. The project features both backend and frontend components, supporting modern web standards and encryption best practices.
+Password Manager is a secure, personal password management application that lets you store, organize, and encrypt your credentials. Each password entry is individually encrypted using Fernet symmetric encryption with a unique key, ensuring strong security for your sensitive data.
 
 ## Features
 
-- Secure password storage
-- Password generation
-- User authentication (login/signup)
-- Organized vault for credentials
-- Responsive web interface
-- Encryption of sensitive data
-- Easy-to-use UI
+- User registration and token-based authentication
+- Encrypted password storage with per-entry encryption keys
+- Add, view, edit, and delete password entries
+- Bulk delete for multiple entries
+- On-demand password decryption
+- Dark/Light theme toggle
+- PIN-based lock screen for additional security
+- Toast notifications for user feedback
+- Responsive UI with tab-based navigation
 
 ## Tech Stack
 
-- **Frontend:** JavaScript, HTML, CSS (Located in `/frontend`)
-- **Backend:** Python, JavaScript (Located in `/backend`)
-- **Other:** Requirements listed in `requirement.txt`
+| Layer | Technology |
+|-------|------------|
+| **Frontend** | React 19, React Router 7, TailwindCSS 4, Vite 6 |
+| **Backend** | Django 5.2, Django REST Framework 3.16 |
+| **Database** | SQLite3 |
+| **Encryption** | Fernet (cryptography library) |
+| **Icons** | lucide-react |
+| **State Management** | React Context API with useReducer |
 
 ## Project Structure
 
 ```
 Password_Manager/
-├── backend/         # Backend code (API, logic, authentication)
-├── frontend/        # Frontend web application (UI/UX)
+├── backend/
+│   ├── manage.py
+│   ├── backend/                  # Django project configuration
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   │   └── asgi.py
+│   └── backendapi/               # Main Django app
+│       ├── models.py             # UserData, UserSettings models
+│       ├── views.py              # API view classes
+│       ├── serializers.py        # DRF serializers with encryption
+│       └── urls.py               # API URL routing
+├── frontend/
 │   └── password-manager-frontend/
-│       └── package.json
-├── requirement.txt  # Python dependencies for backend
-├── .gitignore
+│       ├── src/
+│       │   ├── main.jsx          # Entry point with routing
+│       │   ├── Home/             # Landing page & Auth component
+│       │   ├── Dashboard/        # Password vault UI
+│       │   │   └── components/   # NavBar, DataList, AddData, etc.
+│       │   ├── Settings/         # Theme, Profile, LockScreen
+│       │   ├── Components/       # Shared components (Toast)
+│       │   ├── store/            # Context API state management
+│       │   ├── contexts/         # Toast notification context
+│       │   ├── hooks/            # Custom hooks
+│       │   └── utils/            # Utility functions
+│       ├── package.json
+│       └── vite.config.js
+├── requirements.txt              # Python dependencies
+├── start-backend.sh              # Backend startup script
+├── start-frontend.sh             # Frontend startup script
+├── .env                          # Environment variables
+└── .gitignore
 ```
 
 ## Installation
 
 ### Prerequisites
 
-- Node.js & npm (for frontend)
-- Python 3.x (for backend)
+- Python 3.x
+- Node.js & npm
 - Git
 
-### Steps
+### Backend Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/srmahapatra95/Password_Manager.git
-   cd Password_Manager
-   ```
+```bash
+git clone https://github.com/srmahapatra95/Password_Manager.git
+cd Password_Manager
+pip install -r requirements.txt
+cd backend
+python manage.py migrate
+python manage.py runserver
+```
 
-2. **Backend Setup**
-   ```bash
-   cd backend
-   pip install -r ../requirement.txt
-   # Run backend server (specify main file here if needed)
-   # python app.py
-   ```
+The backend runs at `http://localhost:8000`.
 
-3. **Frontend Setup**
-   ```bash
-   cd ../frontend/password-manager-frontend
-   npm install
-   npm run dev
-   ```
+### Frontend Setup
+
+```bash
+cd frontend/password-manager-frontend
+npm install
+npm run dev
+```
+
+The frontend runs at `http://localhost:5174`.
+
+## API Endpoints
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| POST | `/api/register/` | Register a new user | No |
+| GET | `/api/check-username-available/` | Check username availability | No |
+| POST | `/api/login/` | Login and receive token | No |
+| POST | `/api/is-authenticated-user/` | Verify authentication status | Yes |
+| POST | `/api/logout/` | Logout and revoke token | Yes |
+| POST | `/api/check-password/` | Verify user password | Yes |
+| PATCH | `/api/check-password/` | Change user password | Yes |
+| GET | `/api/get-user-settings/` | Get user settings | Yes |
+| PATCH | `/api/set-user-settings/` | Update user settings | Yes |
+| POST | `/api/check-pin/` | Verify lock screen PIN | Yes |
+| GET | `/api/datalist/` | List all password entries | Yes |
+| POST | `/api/add-data/` | Create a password entry | Yes |
+| GET | `/api/data-detail/<id>/` | Get entry details | Yes |
+| PATCH | `/api/data-detail/<id>/` | Update entry | Yes |
+| DELETE | `/api/data-detail/<id>/` | Delete entry | Yes |
+| DELETE | `/api/bulk-delete/` | Bulk delete entries | Yes |
+| POST | `/api/show-password/` | Decrypt a password with key | Yes |
 
 ## Usage
 
-- Access the application via your browser at `http://localhost:3000` (or configured port).
-- Register or login to your account.
-- Add, view, or generate secure passwords.
+1. Open the frontend in your browser at `http://localhost:5174`.
+2. Register a new account or login with existing credentials.
+3. Add password entries with service name, username, email, and password.
+4. Each entry is encrypted with a unique key displayed upon creation — save this key.
+5. Use the key to decrypt and view passwords on demand.
+6. Configure theme and lock screen PIN in Settings.
 
 ## Packages & Libraries
 
 ### Python (Backend)
 
-Key dependencies (from `requirement.txt`):
+| Package | Version | Purpose |
+|---------|---------|---------|
+| Django | 5.2.10 | Web framework |
+| djangorestframework | 3.16.1 | REST API toolkit |
+| cryptography | 44.0.3 | Fernet encryption |
+| django-cors-headers | 4.9.0 | CORS support |
 
-- **Django** (`5.2.2`): Web framework for backend.
-- **djangorestframework** (`3.16.0`): API toolkit for Django.
-- **cryptography** (`3.4.8`): Cryptographic recipes and primitives.
-
-_See the full list in [requirement.txt](https://github.com/srmahapatra95/Password_Manager/blob/main/requirement.txt)._
+Full list in [requirements.txt](requirements.txt).
 
 ### JavaScript (Frontend)
 
-Key dependencies (from `frontend/password-manager-frontend/package.json`):
+| Package | Version | Purpose |
+|---------|---------|---------|
+| React | 19.1.0 | UI library |
+| React Router DOM | 7.6.1 | Client-side routing |
+| TailwindCSS | 4.1.8 | Utility-first CSS |
+| Vite | 6.3.5 | Build tool |
+| lucide-react | 0.563.0 | Icon library |
 
-- **React** (`^19.1.0`): UI library for building user interfaces.
-- **React DOM** (`^19.1.0`): DOM bindings for React.
-- **React Router / React Router DOM** (`^7.6.1`): Routing for React apps.
-- **TailwindCSS** (`^4.1.8`): Utility-first CSS framework.
-- **@tailwindcss/vite** (`^4.1.8`): Tailwind integration for Vite.
-- **Vite** (`^6.3.5`): Frontend build tool.
-
-_See the full list in [package.json](https://github.com/srmahapatra95/Password_Manager/blob/main/frontend/password-manager-frontend/package.json)._
-
-## Contributing
-
-Contributions are welcome!  
-Please open issues or submit pull requests for features, bug fixes, or suggestions.
+Full list in [frontend/password-manager-frontend/package.json](frontend/password-manager-frontend/package.json).

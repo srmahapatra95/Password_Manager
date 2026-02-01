@@ -2,9 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate,logout,login
-from django.views.decorators.http import require_safe
-from django.views.decorators.cache import never_cache
-from django.middleware.csrf import get_token
 from django.contrib.auth.hashers import check_password, make_password
 
 
@@ -14,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import permissions
-from rest_framework.authentication import TokenAuthentication,SessionAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, renderer_classes
 
@@ -25,13 +22,6 @@ from .models import UserData
 from .serializers import *
 
 
-#https://stackoverflow.com/questions/77026228/how-do-i-setup-csrf-token-for-purely-rest-api-communication-between-two-django-a
-@require_safe # only safe methods GET and HEAD, any operation with PUT, PATCH, POST is rejected
-@never_cache
-@api_view(('GET',))
-def get_csrf(request):
-    get_token(request)
-    return Response(status.HTTP_200_OK)
 
 class UserNameAvailableView(APIView):
     def get(self, request):
@@ -107,7 +97,7 @@ class LoginView(APIView):
             user = authenticate(request, username=username, password=password)
 
             if user is not None:
-                token = Token.objects.get(user=user)
+                token, _ = Token.objects.get_or_create(user=user)
                 return Response(
                     {'message': 'Login successful','token':token.key},
                     status=status.HTTP_200_OK
@@ -125,7 +115,7 @@ class LoginView(APIView):
             )
 
 class IsAuthenticatedUserView(APIView):
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
@@ -146,7 +136,7 @@ class IsAuthenticatedUserView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 class GetUserSettingsView(APIView):
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
@@ -169,7 +159,7 @@ class GetUserSettingsView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 class CheckPINView(APIView):
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request):
@@ -194,7 +184,7 @@ class CheckPINView(APIView):
 
 
 class SetUserSettingsView(APIView):
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def patch(self, request):
@@ -221,7 +211,7 @@ class SetUserSettingsView(APIView):
 
 
 class CheckPasswordView(APIView):
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
 
@@ -280,7 +270,7 @@ def Logout(request):
     return Response(status=status.HTTP_200_OK)
 
 class UserDataListView(APIView):
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserDataListSerializers
 
@@ -301,7 +291,7 @@ class UserDataListView(APIView):
 
 class AddUserDataView(APIView):
 
-    authentication_classes = [TokenAuthentication,SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = UserDataDetailSerializers
 
@@ -322,7 +312,7 @@ class AddUserDataView(APIView):
         
 
 class ShowPasswordView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]  
 
     def post(self, request):
@@ -350,7 +340,7 @@ class ShowPasswordView(APIView):
             )
         
 class UpdatePasswordDataView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     
@@ -385,7 +375,7 @@ class UpdatePasswordDataView(APIView):
 
 class UserDataDetailView(APIView):
     serializer_class = UserDataDetailSerializers
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, request):
@@ -436,7 +426,7 @@ class UserDataDetailView(APIView):
 
 
 class BulkDeleteView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self, request):

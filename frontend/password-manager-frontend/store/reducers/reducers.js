@@ -156,5 +156,9 @@ export function lockScreenStateReducer(state, action){
           return{
           ...state,lockScreen_On_Off: action.payload,
         }
+      case 'SET_HAS_PIN':
+          return{
+          ...state, hasPin: action.payload, settingsLoaded: true,
+        }
   }
 }

@@ -1,6 +1,7 @@
 import {React ,useState ,useContext, useEffect} from 'react'
 import { GlobalContext } from '../../../store';
 import TabContent from './TabContent';
+import { X, Database, KeyRound } from 'lucide-react'
 
 function Tab() {
     const { tabState, tabDispatch } = useContext(GlobalContext);
@@ -36,19 +37,15 @@ function Tab() {
 
     function TabButton({ data }) {
         const isActiveTab = tabState.activeTab.length > 0 && tabState.activeTab[tabState.activeTab.length - 1].id === data.id;
-        
+
         function handleTabClick(e) {
             e.preventDefault();
-            
-
 
             if (!isActiveTab) {
-                // Perform state updates synchronously
                 tabDispatch({ type: 'UPDATE_ACTIVE_TAB', payload: data });
                 updateTabData(data);
                 screenDispatch({ type: 'DISABLE', payload: false });
                 screenDispatch({type: 'DISABLE_TAB_SCREEN', payload: false})
-
             }
         }
 
@@ -58,17 +55,15 @@ function Tab() {
 
             screenDispatch({ type: 'DISABLE', payload: false });
             screenDispatch({type: 'DISABLE_TAB_SCREEN', payload: false})
-            
+
             if (isActiveTab && currentTabIndex > 0) {
                 const prevTab = tabState.activeTab[currentTabIndex - 1];
                 tabDispatch({ type: 'UPDATE_ACTIVE_TAB', payload: prevTab });
                 updateTabData(prevTab);
             }
 
-            // Then remove the tab
             tabDispatch({ type: "REMOVE_TAB", payload: data });
 
-            // If this was the last tab, clear the form
             if (tabState.activeTab.length <= 1) {
             setId("")
             setUser("")
@@ -82,14 +77,13 @@ function Tab() {
         }
 
         return (
-            <div className={`w-20/100 h-98/100 p-2 border-b-3 flex flex-row justify-between items-center cursor-pointer ${isActiveTab ? 'bg-slate-300 dark:bg-slate-600 border-t-3 rounded-t-md text-slate-900 dark:text-slate-100 border-slate-200 dark:border-slate-600' : 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border-slate-400 dark:border-slate-600 border-slate-300'}`}>
-                <div onClick={handleTabClick} className="w-full h-full p-1 flex flex-row items-center" title={data.name}>
-                    <p className='mx-2'>{data.details_for.length > 8 ? data.details_for.slice(0,6)+'...': data.details_for}</p>
+            <div className={`min-w-[140px] max-w-[200px] px-3 py-2.5 flex flex-row items-center cursor-pointer text-sm transition-all duration-200 rounded-t-xl ${isActiveTab ? 'bg-stone-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-gray-200 dark:ring-gray-700 ring-b-0' : 'bg-slate-200/70 dark:bg-gray-800/70 text-gray-500 dark:text-gray-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 hover:text-indigo-600 dark:hover:text-indigo-400'}`}>
+                <div onClick={handleTabClick} className="flex flex-row items-center gap-2 flex-1 min-w-0" title={data.details_for}>
+                    <KeyRound className={`w-3.5 h-3.5 flex-shrink-0 ${isActiveTab ? 'text-indigo-500' : 'text-gray-400 dark:text-gray-600'}`} />
+                    <p className='truncate font-bold text-sm text-gray-500 dark:text-gray-400 tracking-wider'>{data.details_for.length > 12 ? data.details_for.slice(0,10)+'...' : data.details_for}</p>
                 </div>
-                <button onClick={handleCloseTab} className="hover:bg-rose-50 hover:text-black rounded-full cursor-pointer" title="Close tab">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-                    <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-                    </svg>
+                <button onClick={handleCloseTab} className="ml-1.5 p-1 rounded-lg hover:bg-rose-100 dark:hover:bg-rose-900/30 hover:text-rose-500 cursor-pointer transition-colors flex-shrink-0 opacity-60 hover:opacity-100" title="Close tab">
+                    <X className='w-3 h-3' />
                 </button>
             </div>
         );
@@ -101,30 +95,34 @@ function Tab() {
 
   return (
     <>
-    <div className='flex flex-col justify-center items-center w-98/100 h-98/100'>
+    <div className='flex flex-col w-full h-full'>
         {buttonList.length !== 0?(<>
 
-            <div id='tab-buttons' className='w-full h-1/10 flex-flex-row'>
+            <div id='tab-buttons' className='w-full bg-stone-100 dark:bg-gray-900 rounded-t-xl border border-b-0 border-gray-200 dark:border-gray-700 flex-shrink-0'>
                 {buttonList.length > 0 && (
-                    <div className="flex flex-row h-full items-center overflow-x-auto no-scrollbar">{buttonList}</div>
+                    <div className="flex flex-row h-full items-end overflow-x-auto no-scrollbar gap-1 px-2 pt-2">{buttonList}</div>
                 )}
             </div>
-            <div id='tab-content' className='w-full h-9/10 bg-gray-200 dark:bg-gray-900'>
+            <div id='tab-content' className='w-full flex-1 min-h-0 bg-stone-50 dark:bg-gray-800 rounded-b-xl border border-t-0 border-gray-200 dark:border-gray-700 shadow-sm'>
                 {tabState.tabContentList.length > 0 && (
-                    <div className="w-full h-full bg-slate-200 dark:bg-slate-800">
+                    <div className="w-full h-full">
                         <TabContent />
                     </div>
-                )}   
+                )}
             </div>
 
         </>):(<>
-            <div className='w-full h-full flex flex-col items-center justify-center border-4 border-slate-300 dark:border-slate-800 rounded-md'>
-                <p className='text-xl text-bold text-slate-900 dark:text-slate-300 font-mono'>
-                    Your Data Will Be Displayed Here.
+            <div className='w-full h-full flex flex-col items-center justify-center border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl bg-white/50 dark:bg-gray-800/50'>
+                <Database className='w-12 h-12 text-gray-300 dark:text-gray-700 mb-3' />
+                <p className='text-base text-gray-400 dark:text-gray-600 font-medium'>
+                    Your Data Will Be Displayed Here
+                </p>
+                <p className='text-sm text-gray-300 dark:text-gray-700 mt-1'>
+                    Select an item from the list to get started
                 </p>
             </div>
         </>)}
-        
+
     </div>
     </>
   )

@@ -6,7 +6,7 @@ const ToastsContainer = ({toasts}) =>{
         return <Toast key={toast.id} {...toast}/>
     })
     return (
-        <div className='w-3/10 fixed top-4 right-4 flex flex-col-reverse z-50'>
+        <div className='w-80 fixed top-4 right-4 flex flex-col-reverse z-50 gap-1'>
             {items}
         </div>
     )

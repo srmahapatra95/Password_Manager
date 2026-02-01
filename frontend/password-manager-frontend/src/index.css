@@ -14,57 +14,54 @@
       scrollbar-width: none; /* Firefox */
     }
     .opaque{
-      background: rgba(10,10,10,0.4);
-      backdrop-filter: blur(1.5px);
+      background: rgba(10,10,10,0.55);
+      backdrop-filter: blur(8px);
     }
 
-
-
   .toasts{
-    box-shadow: 0px 0px 7px -3px white; 
+    box-shadow: 0px 0px 7px -3px white;
     animation: slide-in 0.4s ease-in-out forwards;
   }
-  
+
   .toasts-dismissed{
     animation: slide-out 0.4s ease-in-out forwards;
   }
-  
-  
 
-  
   .dismiss-btn{
     font-size: 20px;
     cursor: pointer;
     color: rgb(220, 212, 212);
   }
-  
+
   .toast-progress{
-    height: 5px;  
+    height: 4px;
     z-index: 2 !important;
+    border-radius: 0 0 8px 8px;
+    overflow: hidden;
   }
-  
+
   .toast-progress-bar{
     height: 100%;
     border-radius: 0px 0px 8px 8px;
     animation: progress-bar 4s linear forwards;
   }
-  
+
   .toast-progress-bar.success {
-    background-color: green;
+    background-color: #22c55e;
   }
-  
+
   .toast-progress-bar.info {
-    background-color: blue;
+    background-color: #6366f1;
   }
-  
+
   .toast-progress-bar.warning {
-    background-color: orange;
+    background-color: #f59e0b;
   }
-  
+
   .toast-progress-bar.error {
-    background-color: red;
+    background-color: #ef4444;
   }
-  
+
   @keyframes progress-bar {
     0%{
       width: 100%;
@@ -73,7 +70,7 @@
       width: 0%;
     }
   }
-  
+
   @keyframes slide-in {
     0%{
       opacity: 0;
@@ -84,7 +81,7 @@
       transform: translateX(0%);
     }
   }
-  
+
   @keyframes slide-out {
     0%{
       opacity: 0;
@@ -95,70 +92,82 @@
       transform: translateX(100%);
     }
   }
-  
 
   /* Toggle Switch*/
   .switch {
-  position: relative;
-  display: inline-block;
-  width: 50px;
-  height: 30px;
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--color-slate-400);
+    -webkit-transition: .3s;
+    transition: .3s;
+  }
+
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .3s;
+    transition: .3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  input:checked + .slider {
+    background-color: var(--color-indigo-500);
+  }
+
+  input:focus + .slider {
+    box-shadow: 0 0 2px var(--color-indigo-500);
+  }
+
+  input:checked + .slider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+  }
+
+  .slider.round {
+    border-radius: 24px;
+  }
+
+  .slider.round:before {
+    border-radius: 50%;
+  }
+
+  /* Custom scrollbar for non-hidden areas */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-slate-400);
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-slate-500);
+  }
 }
 
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--color-slate-500);
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 21px;
-  width: 21px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-input:checked + .slider {
-  background-color: var(--color-gray-500);
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px var(--color-gray-500);
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(21px);
-  -ms-transform: translateX(21px);
-  transform: translateX(21px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 30px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-}
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
